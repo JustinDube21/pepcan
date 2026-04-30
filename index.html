@@ -1,10 +1,549 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-CA">
 <head>
-  <title>PepCan</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Peptides Canada | Premium Research Peptides in Canada</title>
+  <meta name="description" content="Peptides Canada premium research-use-only catalog presentation. Laboratory-focused product cards, Canadian positioning, and professional research documentation messaging.">
+  <link rel="canonical" href="./index.html">
+  <link rel="stylesheet" href="./style.css">
 </head>
-<body>
-  <h1>PepCan est en ligne</h1>
-  <p>Site test GitHub Pages.</p>
+<body class="template-index static-site">
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
+  <div class="announcement-bar" role="banner">
+    <div class="container">
+      <p>Complimentary shipping on orders $249.99+ CAD | Research use only</p>
+    </div>
+  </div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <div class="header-wrapper">
+        <a href="./index.html" class="header-logo" aria-label="Peptides Canada home">
+          <img src="./assets/logo.svg" alt="Peptides Canada" width="200" height="60">
+        </a>
+
+        <nav class="header-nav" aria-label="Primary navigation">
+          <a href="./index.html" class="active">Home</a>
+          <a href="#products">Products</a>
+          <a href="#categories">Categories</a>
+          <a href="#lab-testing">Lab Testing</a>
+          <a href="#faq">FAQ</a>
+          <a href="#contact">Contact</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-button" id="searchToggle" type="button" aria-label="Open search" aria-expanded="false">
+            <span class="icon-search" aria-hidden="true"></span>
+          </button>
+          <a class="icon-button" href="#contact" aria-label="Contact support">
+            <span class="icon-user" aria-hidden="true"></span>
+          </a>
+          <a class="icon-button" href="#products" aria-label="View catalog">
+            <span class="icon-bag" aria-hidden="true"></span>
+            <span class="cart-count">0</span>
+          </a>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open mobile menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="static-search-panel" id="searchPanel" hidden>
+      <div class="container">
+        <label for="siteSearch">Search the catalog</label>
+        <div class="static-search-row">
+          <input id="siteSearch" type="search" placeholder="Search BPC-157, Retatrutide, GHK-Cu..." autocomplete="off">
+          <button class="btn btn-primary" type="button" id="clearSearch">Clear</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true"></div>
+  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation" hidden>
+    <a href="./index.html">Home</a>
+    <a href="#products">Shop All</a>
+    <a href="#categories">Shop by Category</a>
+    <a href="#lab-testing">Lab Testing</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <main id="main-content">
+    <section class="pc-hero">
+      <div class="pc-hero__ambient" aria-hidden="true"></div>
+      <div class="container">
+        <div class="pc-hero__shell fade-in">
+          <div class="pc-hero__content">
+            <div class="pc-hero__eyebrow">
+              <span class="pc-hero__eyebrow-dot"></span>
+              Canada's trusted research peptide source
+            </div>
+
+            <h1 class="pc-hero__heading">
+              Premium <span>Research Peptides</span> in Canada
+            </h1>
+
+            <p class="pc-hero__subtitle">
+              Premium research-use-only product presentation with a clean laboratory aesthetic, professional documentation messaging, and a Canadian-focused catalog experience.
+            </p>
+
+            <div class="pc-hero__microproof" aria-label="Store highlights">
+              <span>Third-party testing focus</span>
+              <span>COA support when applicable</span>
+              <span>Domestic Canadian fulfillment</span>
+            </div>
+
+            <div class="pc-hero__actions">
+              <a href="#products" class="btn btn-primary btn-lg pc-hero__primary-cta">Browse Catalog</a>
+              <a href="#lab-testing" class="btn btn-outline btn-lg pc-hero__secondary-cta">View Lab Testing</a>
+            </div>
+
+            <div class="pc-hero__metrics" aria-label="Research store metrics">
+              <div class="pc-hero__metric">
+                <strong>COA</strong>
+                <span>Available when applicable</span>
+              </div>
+              <div class="pc-hero__metric">
+                <strong>Canada</strong>
+                <span>Domestic presentation</span>
+              </div>
+              <div class="pc-hero__metric">
+                <strong>RUO</strong>
+                <span>Research use only</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pc-hero__visual">
+            <div class="pc-hero__visual-card">
+              <div class="pc-hero__visual-topline">Featured product spotlight</div>
+              <a href="#products" class="pc-hero__image-wrap">
+                <img
+                  src="./assets/products/retatrutide-10mg.png"
+                  alt="Retatrutide research peptide Canada"
+                  width="480"
+                  height="480"
+                  loading="eager"
+                  class="pc-hero__image"
+                >
+              </a>
+              <div class="pc-hero__product-meta">
+                <div>
+                  <p class="pc-hero__product-label">Featured product highlight</p>
+                  <h2><a href="#products">Retatrutide 10mg</a></h2>
+                </div>
+                <div class="pc-hero__product-pill-row">
+                  <span>Research use only</span>
+                  <span>Research use only</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pc-hero__trust-row" aria-label="Trust highlights">
+          <div class="pc-hero__trust-item">
+            <span class="pc-hero__trust-icon" aria-hidden="true">✓</span>
+            <div>
+              <strong>Quality controlled</strong>
+              <p>Premium product presentation with documentation-first positioning.</p>
+            </div>
+          </div>
+          <div class="pc-hero__trust-item">
+            <span class="pc-hero__trust-icon" aria-hidden="true">◇</span>
+            <div>
+              <strong>Trusted purchase experience</strong>
+              <p>Clear policies, secure-looking flow, and professional catalog structure.</p>
+            </div>
+          </div>
+          <div class="pc-hero__trust-item">
+            <span class="pc-hero__trust-icon" aria-hidden="true">→</span>
+            <div>
+              <strong>Fast Canadian shipping</strong>
+              <p>Domestic fulfillment messaging designed for a smoother catalog experience.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="categories">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Shop by category</span>
+          <h2>Browse research categories</h2>
+          <p>Browse a clean set of research categories designed for fast product discovery.</p>
+        </div>
+
+        <div class="static-category-grid">
+          <a href="#products" class="static-category-card" data-category-link="healing">
+            <img src="./assets/collections/healing-cat.png" alt="Healing research peptide category">
+            <div>
+              <span>2 products</span>
+              <h3>Healing</h3>
+              <p>Recovery and tissue-support research category.</p>
+            </div>
+          </a>
+          <a href="#products" class="static-category-card" data-category-link="performance">
+            <img src="./assets/collections/performance-cat.png" alt="Performance research peptide category">
+            <div>
+              <span>4 products</span>
+              <h3>Performance</h3>
+              <p>Peptide receptor and performance-related research.</p>
+            </div>
+          </a>
+          <a href="#products" class="static-category-card" data-category-link="metabolic">
+            <img src="./assets/collections/metabolic-cat.png" alt="Metabolic research peptide category">
+            <div>
+              <span>3 products</span>
+              <h3>Metabolic</h3>
+              <p>Metabolic pathway and incretin-related research.</p>
+            </div>
+          </a>
+          <a href="#products" class="static-category-card" data-category-link="nootropics">
+            <img src="./assets/collections/nootropics-cat.png" alt="Nootropics research peptide category">
+            <div>
+              <span>2 products</span>
+              <h3>Nootropics</h3>
+              <p>Neuropeptide and structure-focused research.</p>
+            </div>
+          </a>
+          <a href="#products" class="static-category-card" data-category-link="premium-blend">
+            <img src="./assets/collections/premium-blend-cat.png" alt="Premium blend research peptide category">
+            <div>
+              <span>2 products</span>
+              <h3>Premium Blend</h3>
+              <p>Premium blend cards for professional catalog presentation.</p>
+            </div>
+          </a>
+          <a href="#products" class="static-category-card" data-category-link="reconstitution">
+            <img src="./assets/collections/reconstitution-cat.png" alt="Laboratory preparation category">
+            <div>
+              <span>1 product</span>
+              <h3>Reconstitution</h3>
+              <p>Laboratory preparation materials for research workflows.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="featured-products" id="products">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Research catalog</span>
+          <h2>Featured <span>Products</span></h2>
+          <p>Explore research-use-only product cards with image, product name, short description, and external inquiry links.</p>
+        </div>
+
+        <div class="static-filter-bar" aria-label="Product filters">
+          <button class="filter-pill active" type="button" data-filter="all">All</button>
+          <button class="filter-pill" type="button" data-filter="healing">Healing</button>
+          <button class="filter-pill" type="button" data-filter="metabolic">Metabolic</button>
+          <button class="filter-pill" type="button" data-filter="performance">Performance</button>
+          <button class="filter-pill" type="button" data-filter="nootropics">Nootropics</button>
+          <button class="filter-pill" type="button" data-filter="premium-blend">Premium Blend</button>
+          <button class="filter-pill" type="button" data-filter="reconstitution">Reconstitution</button>
+          <button class="filter-pill" type="button" data-filter="tanning">Tanning</button>
+        </div>
+
+        <div class="products-grid static-products-grid" id="productGrid">
+          <!-- Replace each placeholder payment URL below with your external payment, product, or inquiry link. -->
+          <article class="product-card" data-product data-category="healing" data-search="bpc-157 10mg healing research peptide">
+            <div class="product-card__image"><img src="./assets/products/bpc-157-10mg.png" alt="BPC-157 research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Healing</span>
+              <h3>BPC-157 10mg</h3>
+              <p>Laboratory research peptide for analytical characterization and research-use-only workflows.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="healing" data-search="tb-500 10mg healing research peptide">
+            <div class="product-card__image"><img src="./assets/products/tb-500-10mg.png" alt="TB-500 research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Healing</span>
+              <h3>TB-500 10mg</h3>
+              <p>Research-use-only peptide card with premium laboratory product presentation.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="metabolic" data-search="retatrutide 10mg metabolic research peptide">
+            <div class="product-card__image"><img src="./assets/products/retatrutide-10mg.png" alt="Retatrutide research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Metabolic</span>
+              <h3>Retatrutide 10mg</h3>
+              <p>Premium product presentation for peptide receptor and analytical research contexts.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="metabolic" data-search="tirzepatide 10mg metabolic research peptide">
+            <div class="product-card__image"><img src="./assets/products/tirzepatide-10mg.png" alt="Tirzepatide research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Metabolic</span>
+              <h3>Tirzepatide 10mg</h3>
+              <p>Research peptide catalog card for laboratory-only product presentation.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="anti-aging" data-search="ghk-cu copper tripeptide 50mg research peptide">
+            <div class="product-card__image"><img src="./assets/products/ghk-cu-50mg.png" alt="GHK-Cu research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Research</span>
+              <h3>GHK-Cu 50mg</h3>
+              <p>Copper-binding research peptide presented for laboratory and analytical use only.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="performance" data-search="tesamoralin tesamorelin 10mg performance research peptide">
+            <div class="product-card__image"><img src="./assets/products/tesamorelin-10mg.png" alt="Tesamoralin research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Performance</span>
+              <h3>Tesamoralin 10mg</h3>
+              <p>Laboratory-grade research peptide card with premium product layout.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="performance" data-search="ipamoralin ipamorelin 10mg performance research peptide">
+            <div class="product-card__image"><img src="./assets/products/ipamorelin-10mg.png" alt="Ipamoralin research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Performance</span>
+              <h3>Ipamoralin 10mg</h3>
+              <p>Research peptide presentation for peptide receptor pathway and stability analysis.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="metabolic" data-search="mots-c 10mg metabolic research peptide">
+            <div class="product-card__image"><img src="./assets/products/mots-c-10mg.png" alt="MOTS-c research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Metabolic</span>
+              <h3>MOTS-c 10mg</h3>
+              <p>Mitochondrial-derived peptide research card for premium catalog browsing.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="tanning" data-search="melanotan 1 10mg melanocortin research peptide">
+            <div class="product-card__image"><img src="./assets/products/melanotan-1-10mg.png" alt="Melanotan 1 research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Research</span>
+              <h3>Melanotan 1 10mg</h3>
+              <p>Melanocortin-related research peptide. Not for cosmetic, tanning, or human use.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="tanning" data-search="melanotan 2 10mg melanocortin research peptide">
+            <div class="product-card__image"><img src="./assets/products/melanotan-2-10mg.png" alt="Melanotan 2 research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Research</span>
+              <h3>Melanotan 2 10mg</h3>
+              <p>Research-use-only peptide card. Not for cosmetic, tanning, clinical, or human use.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="performance" data-search="cjc-1295 10mg performance research peptide">
+            <div class="product-card__image"><img src="./assets/products/cjc-1295-10mg.png" alt="CJC-1295 research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Performance</span>
+              <h3>CJC-1295 10mg</h3>
+              <p>Premium catalog card for laboratory peptide receptor pathway research contexts.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="premium-blend" data-search="glow blend 50mg premium blend research peptide">
+            <div class="product-card__image"><img src="./assets/products/glow-blend-50mg.png" alt="Glow Blend research peptide blend Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Premium Blend</span>
+              <h3>Glow Blend 50mg</h3>
+              <p>Premium peptide blend card for laboratory formulation and documentation review.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="premium-blend" data-search="klow blend 80mg premium blend research peptide">
+            <div class="product-card__image"><img src="./assets/products/klow-blend-80mg.png" alt="Klow Blend research peptide blend Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Premium Blend</span>
+              <h3>Klow Blend 80mg</h3>
+              <p>Research-use-only peptide blend card for premium product presentation.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="reconstitution" data-search="bacteriostatic water 10ml laboratory preparation">
+            <div class="product-card__image"><img src="./assets/products/bacteriostatic-water-10ml.png" alt="Bacteriostatic Water 10ml laboratory material Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Preparation</span>
+              <h3>Bacteriostatic Water 10ml</h3>
+              <p>Laboratory preparation material. Not for injection, human, animal, or clinical use.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="performance" data-search="sermorelin 10mg performance research peptide">
+            <div class="product-card__image"><img src="./assets/products/sermorelin-10mg.png" alt="Sermorelin research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Performance</span>
+              <h3>Sermorelin 10mg</h3>
+              <p>Research peptide card for structure-related laboratory analysis and characterization.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="nootropics" data-search="semax 10mg nootropics research peptide">
+            <div class="product-card__image"><img src="./assets/products/semax-10mg.png" alt="Semax research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Nootropics</span>
+              <h3>Semax 10mg</h3>
+              <p>Neuropeptide-related research peptide for laboratory characterization workflows.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+
+          <article class="product-card" data-product data-category="nootropics" data-search="selank 10mg nootropics research peptide">
+            <div class="product-card__image"><img src="./assets/products/selank-10mg.png" alt="Selank research peptide Canada" loading="lazy"></div>
+            <div class="product-card__content">
+              <span class="product-card__badge">Nootropics</span>
+              <h3>Selank 10mg</h3>
+              <p>Research-use-only peptide card for neuropeptide pathway and stability research.</p>
+              <a href="https://example.com/replace-with-payment-link" class="btn btn-primary btn-full" target="_blank" rel="noopener">External Link</a>
+            </div>
+          </article>
+        </div>
+
+        <p class="static-empty-state" id="emptyState" hidden>No matching products found.</p>
+      </div>
+    </section>
+
+    <section class="why-choose-us" id="lab-testing">
+      <div class="container">
+        <div class="section-header text-center">
+          <span class="section-eyebrow">Final confidence check</span>
+          <h2>Why Researchers Choose Us</h2>
+        </div>
+
+        <div class="why-grid">
+          <div class="why-card">
+            <div class="why-card__icon">□</div>
+            <h3>Third-Party Lab Tested</h3>
+            <p>Documentation-first positioning with COA support when applicable.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-card__icon">↗</div>
+            <h3>Fast Canadian Shipping</h3>
+            <p>Domestic fulfillment messaging preserved from the original premium theme.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-card__icon">◇</div>
+            <h3>Trusted Purchase Experience</h3>
+            <p>Clear policies, professional product presentation, and documentation-forward support.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-card__icon">!</div>
+            <h3>Research Use Compliance</h3>
+            <p>Clear product positioning and compliance-forward site experience.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="faq">
+      <div class="container static-faq">
+        <div class="section-header">
+          <span class="section-eyebrow">FAQ</span>
+          <h2>Frequently Asked Questions</h2>
+        </div>
+        <details open>
+          <summary>Are these products intended for research use only?</summary>
+          <p>Yes. All products shown are intended strictly for laboratory and research use only. They are not for human consumption.</p>
+        </details>
+        <details>
+          <summary>Can product documentation be requested?</summary>
+          <p>Product documentation, COA information, or batch details may be available when applicable. Use the external inquiry link or support email after replacing the placeholders.</p>
+        </details>
+        <details>
+          <summary>Do products ship from Canada?</summary>
+          <p>This catalog preserves the Canadian fulfillment positioning from the original brand experience. Update the final shipping terms to match your live operation.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="section contact-section" id="contact">
+      <div class="container">
+        <div class="contact-card">
+          <span class="section-eyebrow">Contact</span>
+          <h2>Professional research support</h2>
+          <p>For order questions, product documentation support, or general research-use-only inquiries, contact the support team.</p>
+          <a class="btn btn-primary btn-lg" href="mailto:support@example.com">Email Support</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <img src="./assets/logo.svg" alt="Peptides Canada" class="footer-logo" width="180" height="54">
+          <p>Premium Canadian research-use-only catalog presentation with a clean laboratory aesthetic.</p>
+        </div>
+        <div>
+          <h3>Navigation</h3>
+          <a href="./index.html">Home</a>
+          <a href="#products">Products</a>
+          <a href="#categories">Categories</a>
+          <a href="#faq">FAQ</a>
+        </div>
+        <div>
+          <h3>Trust</h3>
+          <a href="#lab-testing">Lab Testing</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>All products shown are for research and laboratory use only. Not for human consumption.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="legal-disclaimer-banner" id="legalDisclaimer">
+    <div class="container">
+      <p>All products are strictly for <strong>research and laboratory use only</strong>. Not for human consumption.</p>
+      <button class="disclaimer-close" id="disclaimerClose" aria-label="Close disclaimer">&times;</button>
+    </div>
+  </div>
+
+  <div class="age-gate-modal" id="ageGateModal" role="dialog" aria-modal="true" aria-labelledby="ageGateTitle">
+    <div class="age-gate-content">
+      <div class="age-gate-logo">
+        <img src="./assets/logo.svg" alt="Peptides Canada" width="220" height="66" loading="eager">
+      </div>
+      <h2 id="ageGateTitle">Research Use Confirmation</h2>
+      <p>All products on this site are intended for <strong>laboratory and research purposes only</strong>. By entering, you confirm that you are at least 18 years of age and that you intend to use this catalog only for legitimate research review.</p>
+      <div class="age-gate-actions">
+        <button class="btn btn-primary btn-lg" id="ageGateConfirm">I Confirm &mdash; Enter Site</button>
+        <button class="btn btn-outline btn-lg" id="ageGateDeny">I Do Not Agree</button>
+      </div>
+      <p class="age-gate-fine">Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease.</p>
+    </div>
+  </div>
+
+  <script src="./script.js" defer></script>
 </body>
 </html>
