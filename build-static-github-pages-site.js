@@ -555,25 +555,111 @@ function prefixFor(kind) {
   return kind === "nested" ? "../" : "./";
 }
 
+const SITE_URL = "https://pepcan.vercel.app";
+
+function prefixedPath(prefix, pathname) {
+  if (!pathname) return prefix === "../" ? ".." : "./";
+  return `${prefix}${pathname}`;
+}
+
 function productUrl(product, prefix) {
-  return `${prefix}products/${product.handle}.html`;
+  return prefixedPath(prefix, `products/${product.handle}`);
 }
 
 function collectionUrl(collection, prefix) {
-  return `${prefix}collections/${collection.handle}.html`;
+  return prefixedPath(prefix, `collections/${collection.handle}`);
+}
+
+function webpAsset(folder, filename) {
+  const webp = filename.replace(/\.[^.]+$/, ".webp");
+  return fs.existsSync(path.join(sourceAssets, folder, webp)) ? webp : filename;
+}
+
+function productImage(product) {
+  return webpAsset("products", product.image);
+}
+
+function collectionImage(collection) {
+  return webpAsset("collections", collection.image);
+}
+
+function canonicalUrl(pathname = "") {
+  return `${SITE_URL}${pathname ? `/${pathname}` : "/"}`;
+}
+
+function organizationSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "PeptidesCanada",
+    url: SITE_URL,
+    logo: `${SITE_URL}/assets/logo.svg`,
+    sameAs: []
+  };
+}
+
+function breadcrumbSchema(items) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: canonicalUrl(item.path || "")
+    }))
+  };
+}
+
+function pageSchemas(crumbs = [], extra = []) {
+  return [
+    organizationSchema(),
+    breadcrumbSchema([{ name: "Home", path: "" }, ...crumbs]),
+    ...extra
+  ];
+}
+
+function productSchema(product) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.summary,
+    image: `${SITE_URL}/assets/products/${productImage(product)}`,
+    sku: product.handle,
+    brand: { "@type": "Brand", name: "PeptidesCanada" },
+    category: "Research compounds",
+    offers: {
+      "@type": "Offer",
+      url: canonicalUrl(`products/${product.handle}`),
+      priceCurrency: "CAD",
+      price: product.price.replace(/[^0-9.]/g, ""),
+      availability: "https://schema.org/InStock"
+    }
+  };
+}
+
+function schemaScript(schema) {
+  return schema && schema.length
+    ? `  <script type="application/ld+json">${JSON.stringify(schema).replace(/</g, "\\u003c")}</script>\n`
+    : "";
+}
+
+function cleanInlineLinks(html) {
+  return html.replace(/\.html\b/g, "");
 }
 
 function nav(prefix, active = "") {
   const links = [
-    ["Home", `${prefix}index.html`, "home"],
-    ["Products", `${prefix}products.html`, "products"],
-    ["Collections", `${prefix}collections/index.html`, "collections"],
-    ["Contact", `${prefix}contact.html`, "contact"],
-    ["Payment", `${prefix}payment.html`, "payment"]
+    ["Home", prefixedPath(prefix, ""), "home"],
+    ["Products", prefixedPath(prefix, "products"), "products"],
+    ["Categories", prefixedPath(prefix, "collections"), "collections"],
+    ["About", prefixedPath(prefix, "about"), "about"],
+    ["Payment", prefixedPath(prefix, "payment"), "payment"]
   ];
   return `
     <header class="site-header">
-      <a class="brand" href="${prefix}index.html" aria-label="PeptidesCanada home">
+      <a class="brand" href="${prefixedPath(prefix, "")}" aria-label="PeptidesCanada home">
         <img src="${prefix}assets/logo.svg" alt="PeptidesCanada" width="200" height="60">
       </a>
       <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" data-menu-toggle>
@@ -598,31 +684,32 @@ function footer(prefix) {
       </div>
       <div>
         <h3>Catalog</h3>
-        <a href="${prefix}products.html">All Products</a>
-        <a href="${prefix}collections/healing.html">Healing</a>
-        <a href="${prefix}collections/metabolic.html">Metabolic</a>
-        <a href="${prefix}collections/nootropics.html">Nootropics</a>
+        <a href="${prefixedPath(prefix, "products")}">All Products</a>
+        <a href="${prefixedPath(prefix, "collections/healing")}">Healing</a>
+        <a href="${prefixedPath(prefix, "collections/metabolic")}">Metabolic</a>
+        <a href="${prefixedPath(prefix, "collections/nootropics")}">Nootropics</a>
       </div>
       <div>
         <h3>Support</h3>
-        <a href="${prefix}contact.html">Contact</a>
-        <a href="${prefix}shipping.html">Shipping Policy</a>
-        <a href="${prefix}refund.html">Refund Policy</a>
-        <a href="${prefix}payment.html">Payment</a>
+        <a href="${prefixedPath(prefix, "contact")}">Contact</a>
+        <a href="${prefixedPath(prefix, "shipping")}">Shipping Policy</a>
+        <a href="${prefixedPath(prefix, "refund")}">Refund Policy</a>
+        <a href="${prefixedPath(prefix, "payment")}">Payment</a>
       </div>
       <div>
         <h3>Trust</h3>
-        <a href="${prefix}lab-testing-coa.html">Lab Testing and COA</a>
-        <a href="${prefix}disclaimer.html">Disclaimer</a>
-        <a href="${prefix}privacy.html">Privacy Policy</a>
-        <a href="${prefix}terms.html">Terms of Service</a>
+        <a href="${prefixedPath(prefix, "lab-testing-coa")}">Lab Testing and COA</a>
+        <a href="${prefixedPath(prefix, "disclaimer")}">Disclaimer</a>
+        <a href="${prefixedPath(prefix, "privacy")}">Privacy Policy</a>
+        <a href="${prefixedPath(prefix, "terms")}">Terms of Service</a>
       </div>
       <p class="footer-bottom">Research use only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease.</p>
     </footer>
   `;
 }
 
-function layout({ title, description, body, prefix = "./", active = "", className = "" }) {
+function layout({ title, description, body, prefix = "./", active = "", className = "", urlPath = "", schema = [] }) {
+  const canonical = canonicalUrl(urlPath);
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -634,7 +721,9 @@ function layout({ title, description, body, prefix = "./", active = "", classNam
   <meta property="og:type" content="website">
   <meta property="og:title" content="${esc(title)} | PeptidesCanada">
   <meta property="og:description" content="${esc(description)}">
-  <link rel="stylesheet" href="${prefix}style.css">
+  <link rel="canonical" href="${canonical}">
+  <meta property="og:url" content="${canonical}">
+${schemaScript(schema)}  <link rel="stylesheet" href="${prefix}style.css">
   <script src="${prefix}script.js" defer></script>
 </head>
 <body class="${className}">
@@ -653,7 +742,7 @@ function productCard(product, prefix) {
   return `
     <article class="product-card" data-product-card data-title="${esc(product.title.toLowerCase())}" data-category="${esc(product.collection)}">
       <a class="product-media" href="${productUrl(product, prefix)}">
-        <img src="${prefix}assets/products/${product.image}" alt="${esc(product.title)} research product image" width="700" height="700" loading="lazy">
+        <img src="${prefix}assets/products/${productImage(product)}" alt="${esc(product.title)} research product image" width="700" height="700" loading="lazy" decoding="async">
       </a>
       <div class="product-body">
         <span class="pill">${esc(product.badge)}</span>
@@ -661,7 +750,7 @@ function productCard(product, prefix) {
         <p>${esc(product.summary)}</p>
         <div class="product-meta">
           <strong>${esc(product.price)}</strong>
-          <a class="card-order" href="${prefix}payment.html?product=${encodeURIComponent(product.title)}">Order</a>
+          <a class="card-order" href="${prefixedPath(prefix, "payment")}?product=${encodeURIComponent(product.title)}">Order</a>
         </div>
       </div>
     </article>
@@ -672,7 +761,7 @@ function collectionCard(collection, prefix) {
   const count = products.filter((product) => collection.handle === "frontpage" || product.collection === collection.handle).length;
   return `
     <a class="collection-card" href="${collectionUrl(collection, prefix)}">
-      <img src="${prefix}assets/collections/${collection.image}" alt="${esc(collection.title)} collection" width="600" height="600" loading="lazy">
+      <img src="${prefix}assets/collections/${collectionImage(collection)}" alt="${esc(collection.title)} collection" width="600" height="600" loading="lazy" decoding="async">
       <div>
         <span>${count} ${count === 1 ? "product" : "products"}</span>
         <h3>${esc(collection.title)}</h3>
@@ -686,10 +775,10 @@ function trustBand() {
   return `
     <section class="trust-band">
       ${[
-        ["Third-Party Tested", "Quality documentation and COA support where available."],
-        ["Ships From Canada", "Domestic fulfillment-focused experience."],
-        ["Secure Manual Checkout", "Static payment flow with clear e-transfer instructions."],
-        ["Research Use Only", "Compliance-first wording throughout the site."]
+        ["Third-party tested", "Quality documentation and COA support where available."],
+        ["Canada-wide shipping", "Fast fulfillment-focused order flow for Canadian researchers."],
+        ["Research use only", "Compliance-first wording across every product and policy page."],
+        ["Secure checkout", "Clear product-specific payment instructions reduce friction."]
       ].map(([title, text]) => `<div><span></span><strong>${title}</strong><p>${text}</p></div>`).join("")}
     </section>
   `;
@@ -698,25 +787,29 @@ function trustBand() {
 function write(file, html) {
   const target = path.join(output, file);
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, html, "utf8");
+  fs.writeFileSync(target, html.replace(/[ \t]+$/gm, ""), "utf8");
 }
 
 function homepage() {
   const featuredHandles = ["bacteriostatic-water-10ml", "bpc-157", "cjc-1295-10-mg", "retatrutide-10mg"];
   const featured = featuredHandles.map((handle) => products.find((product) => product.handle === handle)).filter(Boolean);
+  const spotlight = products.find((product) => product.handle === "bpc-157") || featured[0];
+  const heroProduct = products.find((product) => product.handle === "bacteriostatic-water-10ml") || featured[0];
   return layout({
     title: "Premium Research Peptides in Canada",
-    description: "Premium Canadian research peptide catalog with COA support, domestic fulfillment, secure manual payment instructions, and research-use-only positioning.",
+    description: "Research peptides Canada catalog with quality documentation, Canada-wide shipping, secure ordering, and research-use-only positioning.",
     active: "home",
+    urlPath: "",
+    schema: pageSchemas(),
     body: `
       <section class="hero">
         <div class="hero-copy">
           <span class="eyebrow">Premium research supply</span>
           <h1>Research peptides, simplified for Canadian labs.</h1>
-          <p>A clean catalog for research-use-only compounds, quality documentation, and clear manual ordering without medical or human-use claims.</p>
+          <p>Premium research peptides Canada catalog built for clear product discovery, quality documentation, and fast Canada-wide fulfillment.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="./products.html">Shop Products</a>
-            <a class="btn btn-secondary" href="./lab-testing-coa.html">View Lab Standards</a>
+            <a class="btn btn-primary" href="./products">Browse Products</a>
+            <a class="btn btn-secondary" href="./products">View Research Compounds</a>
           </div>
           <div class="hero-metrics">
             <div><strong>99%+</strong><span>purity standard where listed</span></div>
@@ -725,7 +818,7 @@ function homepage() {
           </div>
         </div>
         <div class="hero-product">
-          <img src="./assets/products/bacteriostatic-water-10ml.png" alt="Bacteriostatic Water 10ml research product vial" width="700" height="700" loading="eager" fetchpriority="high" decoding="async">
+          <img src="./assets/products/${productImage(heroProduct)}" alt="Bacteriostatic Water 10ml research product vial" width="700" height="700" loading="eager" fetchpriority="high" decoding="async">
         </div>
       </section>
       ${trustBand()}
@@ -739,23 +832,26 @@ function homepage() {
             <div><strong>Documentation-first</strong><p>Quality, storage, and COA language stays close to the call to action.</p></div>
           </div>
         </div>
-        ${productCard(products.find((product) => product.handle === "bpc-157") || featured[0], "./")}
+        ${productCard(spotlight, "./")}
       </section>
       <section class="section">
         <div class="section-heading">
           <span class="eyebrow">Shop by category</span>
-          <h2>Find the right research path.</h2>
-          <a class="text-link" href="./collections/index.html">View all collections</a>
+          <h2>Research categories customers expect.</h2>
+          <a class="text-link" href="./collections">View all categories</a>
         </div>
-        <div class="collection-grid">
-          ${collections.filter((collection) => collection.handle !== "frontpage").map((collection) => collectionCard(collection, "./")).join("")}
+        <div class="quick-category-grid">
+          <a class="quick-category-card" href="./collections/metabolic"><div><span>Fat loss</span><h3>Fat loss research</h3><p>Research compounds commonly grouped in metabolic and body-composition study contexts.</p></div><strong>View category</strong></a>
+          <a class="quick-category-card" href="./collections/healing"><div><span>Recovery</span><h3>Recovery research</h3><p>Laboratory materials organized around repair, handling, and recovery pathway research.</p></div><strong>View category</strong></a>
+          <a class="quick-category-card" href="./collections/nootropics"><div><span>Cognitive</span><h3>Cognitive research</h3><p>Research peptides frequently referenced in neuropeptide and cognitive pathway studies.</p></div><strong>View category</strong></a>
+          <a class="quick-category-card" href="./collections/metabolic"><div><span>Metabolic</span><h3>Metabolic compounds</h3><p>Premium research compounds with clear pricing, documentation, and research-use-only context.</p></div><strong>View category</strong></a>
         </div>
       </section>
       <section class="section">
         <div class="section-heading">
           <span class="eyebrow">Featured products</span>
-          <h2>Popular catalog picks.</h2>
-          <a class="text-link" href="./products.html">Browse full catalog</a>
+          <h2>Featured research compounds.</h2>
+          <a class="text-link" href="./products">Browse full catalog</a>
         </div>
         <div class="product-grid">
           ${featured.map((product) => productCard(product, "./")).join("")}
@@ -764,13 +860,13 @@ function homepage() {
       <section class="section quality-section">
         <div>
           <span class="eyebrow">Quality and support</span>
-          <h2>Built for confident browsing.</h2>
+          <h2>Why choose PeptidesCanada.</h2>
           <p>The store keeps the purchase journey simple while preserving a research and educational tone across product pages, policies, and support content.</p>
         </div>
         <div class="quality-list">
-          <div><strong>COA support</strong><p>Quality documentation is prioritized wherever available.</p></div>
-          <div><strong>Fast path to order</strong><p>Product CTAs route directly to payment instructions with the product prefilled.</p></div>
-          <div><strong>Responsive layout</strong><p>Cards, menus, and product details are tuned for phone-first browsing.</p></div>
+          <div><strong>Quality control</strong><p>Product pages keep purity, storage, and documentation details close to the CTA.</p></div>
+          <div><strong>Documentation</strong><p>COA and lab-testing information are easy to find before submitting an order.</p></div>
+          <div><strong>Fast shipping</strong><p>Canada-wide fulfillment messaging stays visible throughout the purchase path.</p></div>
           <div><strong>Compliance language</strong><p>Every page avoids therapeutic, cosmetic, and human-use claims.</p></div>
         </div>
       </section>
@@ -780,13 +876,15 @@ function homepage() {
 
 function productsPage() {
   return layout({
-    title: "All Research Products",
-    description: "Browse all PeptidesCanada research products with images, descriptions, categories, and static payment links.",
+    title: "Research Peptides Canada",
+    description: "Browse research peptides Canada, peptide supplier Canada categories, and research compounds with clear pricing and research-use-only ordering.",
     active: "products",
+    urlPath: "products",
+    schema: pageSchemas([{ name: "Shop research products", path: "products" }]),
     body: `
       <section class="page-hero">
         <span class="eyebrow">Research catalog</span>
-        <h1>Shop research products</h1>
+        <h1>Research peptides Canada catalog</h1>
         <p>Browse research-use-only products by name or category. Each order link opens the manual payment page with the product prefilled.</p>
       </section>
       <section class="catalog-tools">
@@ -802,8 +900,14 @@ function productsPage() {
           </select>
         </label>
       </section>
-      <section class="product-grid" data-product-grid>
-        ${products.map((product) => productCard(product, "./")).join("")}
+      <section class="section catalog-section">
+        <div class="section-heading">
+          <span class="eyebrow">Shop all</span>
+          <h2>Available research compounds</h2>
+        </div>
+        <div class="product-grid" data-product-grid>
+          ${products.map((product) => productCard(product, "./")).join("")}
+        </div>
       </section>
       <p class="empty-state" data-empty-products hidden>No products match those filters. Try a different search or category.</p>
     `
@@ -812,15 +916,17 @@ function productsPage() {
 
 function collectionsIndex() {
   return layout({
-    title: "Research Collections",
-    description: "Browse PeptidesCanada research peptide collections by category with local GitHub Pages links.",
+    title: "Research Categories",
+    description: "Browse PeptidesCanada research peptide categories for recovery, metabolic, cognitive, and premium research compounds.",
     active: "collections",
     prefix: "../",
+    urlPath: "collections",
+    schema: pageSchemas([{ name: "Categories", path: "collections" }]),
     body: `
       <section class="page-hero">
-        <span class="eyebrow">Collections</span>
-        <h1>Shop by Category</h1>
-        <p>Every collection is a static page with local links, product cards, and research-use-only compliance wording.</p>
+        <span class="eyebrow">Categories</span>
+        <h1>Shop research categories</h1>
+        <p>Every category keeps product discovery focused, readable, and research-use-only.</p>
       </section>
       <section class="collection-grid">
         ${collections.map((collection) => collectionCard(collection, "../")).join("")}
@@ -832,19 +938,24 @@ function collectionsIndex() {
 function collectionPage(collection) {
   const items = collection.handle === "frontpage" ? products : products.filter((product) => product.collection === collection.handle);
   return layout({
-    title: `${collection.title} Collection`,
+    title: `${collection.title} Research Category`,
     description: collection.description,
     active: "collections",
     prefix: "../",
+    urlPath: `collections/${collection.handle}`,
+    schema: pageSchemas([
+      { name: "Categories", path: "collections" },
+      { name: collection.title, path: `collections/${collection.handle}` }
+    ]),
     body: `
       <section class="collection-hero">
         <div>
-          <span class="eyebrow">Collection</span>
+          <span class="eyebrow">Category</span>
           <h1>${esc(collection.title)}</h1>
           <p>${esc(collection.intro)}</p>
-          <a class="btn btn-secondary" href="../products.html">View full catalog</a>
+          <a class="btn btn-secondary" href="../products">View full catalog</a>
         </div>
-        <img src="../assets/collections/${collection.image}" alt="${esc(collection.title)} collection artwork" width="600" height="600" loading="eager">
+        <img src="../assets/collections/${collectionImage(collection)}" alt="${esc(collection.title)} category artwork" width="600" height="600" loading="eager" decoding="async">
       </section>
       <section class="product-grid">
         ${items.map((product) => productCard(product, "../")).join("")}
@@ -857,61 +968,74 @@ function productPage(product) {
   const collection = collections.find((item) => item.handle === product.collection);
   const related = product.related.map((handle) => products.find((item) => item.handle === handle)).filter(Boolean);
   return layout({
-    title: `${product.title} Research Product`,
-    description: `${product.title} research-use-only product page with purity, storage, COA, shipping, and manual payment information.`,
+    title: `${product.title} | Research Product`,
+    description: `${product.title} research product page with clear pricing, specifications, quality documentation context, shipping support, and research-use-only ordering.`,
     active: "products",
     prefix: "../",
+    urlPath: `products/${product.handle}`,
+    schema: pageSchemas([
+      { name: "Products", path: "products" },
+      { name: product.title, path: `products/${product.handle}` }
+    ], [productSchema(product)]),
     body: `
       <section class="product-detail">
-        <div class="detail-media">
-          <img src="../assets/products/${product.image}" alt="${esc(product.title)} product vial" width="700" height="700" loading="eager">
+        <div class="product-gallery">
+          <div class="detail-media">
+            <img src="../assets/products/${productImage(product)}" alt="${esc(product.title)} product vial" width="700" height="700" loading="eager" decoding="async">
+          </div>
+          <div class="gallery-thumbs" aria-label="Product gallery">
+            <span class="gallery-thumb is-active"><img src="../assets/products/${productImage(product)}" alt="${esc(product.title)} product vial thumbnail"></span>
+            <span class="gallery-proof">Lab tested</span>
+            <span class="gallery-proof">Research use only</span>
+          </div>
         </div>
         <div class="detail-copy">
-          <a class="breadcrumb" href="../collections/${collection.handle}.html">${esc(collection.title)}</a>
+          <a class="breadcrumb" href="../collections/${collection.handle}">${esc(collection.title)}</a>
           <h1>${esc(product.title)}</h1>
           <p class="lead">${esc(product.summary)}</p>
+          <ul class="benefit-list">
+            <li>Research-use-only material</li>
+            <li>Quality documentation support where available</li>
+            <li>Canada-wide fulfillment workflow</li>
+          </ul>
           <div class="purchase-panel">
             <div class="price-row"><strong>${esc(product.price)}</strong><span>Manual payment instructions</span></div>
             <div class="conversion-points">
-              <span>COA support</span>
+              <span>Lab tested</span>
               <span>Ships from Canada</span>
               <span>Research-use only</span>
             </div>
-            <a class="btn btn-primary btn-wide" href="../payment.html?product=${encodeURIComponent(product.title)}">Start Order</a>
+            <a class="btn btn-primary btn-wide" href="../payment?product=${encodeURIComponent(product.title)}">Start Order Request</a>
             <p class="microcopy">Opens payment instructions with ${esc(product.title)} prefilled for a faster order request.</p>
           </div>
         </div>
       </section>
-      <section class="section split-section">
-        <div>
-          <span class="eyebrow">Research context</span>
-          <h2>For controlled laboratory workflows</h2>
-          <p>${esc(product.details)}</p>
-          <p>This information is provided for research and educational context only. Products are not for human consumption, clinical use, or cosmetic use.</p>
+      <section class="section product-info-section">
+        <div class="product-accordion">
+          <details open>
+            <summary>Description</summary>
+            <p>${esc(product.summary)}</p>
+          </details>
+          <details>
+            <summary>Research context</summary>
+            <p>${esc(product.details)}</p>
+            <p>This information is educational and research-focused only. Products are not for human consumption, clinical use, or cosmetic use.</p>
+          </details>
+          <details>
+            <summary>Storage and specifications</summary>
+            <ul class="spec-list">${product.specs.map((spec) => `<li>${esc(spec)}</li>`).join("")}</ul>
+          </details>
         </div>
-        <div>
-          <span class="eyebrow">Quality profile</span>
-          <h2>Specifications</h2>
-          <ul class="spec-list">
-            ${product.specs.map((spec) => `<li>${esc(spec)}</li>`).join("")}
-          </ul>
-        </div>
-      </section>
-      <section class="section split-section">
-        <div>
-          <h2>Ordering support</h2>
-          <p>Use the order button above to open the manual payment page with this product selected. Include quantity, shipping details, and any documentation questions in your order request.</p>
-        </div>
-        <div>
-          <h2>Research-use disclaimer</h2>
-          <p>All products are intended strictly for research and laboratory use only. They are not for human consumption and are not intended to diagnose, treat, cure, or prevent any disease.</p>
-          <p>Customers are responsible for ensuring compliant handling, storage, and use under applicable laws and institutional requirements.</p>
-        </div>
+        <aside class="trust-stack" aria-label="Product trust details">
+          <div><strong>Lab tested</strong><p>Quality and purity documentation are prioritized wherever batch details are available.</p></div>
+          <div><strong>Research use only</strong><p>Product content avoids medical, therapeutic, cosmetic, and human-use claims.</p></div>
+          <div><strong>Fast order path</strong><p>The product CTA opens payment instructions with this item already selected.</p></div>
+        </aside>
       </section>
       ${product.seoSections ? `
       <section class="section product-copy">
         <div class="copy-panel">
-          ${product.seoSections}
+          ${cleanInlineLinks(product.seoSections)}
           <h3>Research Use Notice</h3>
           <p><strong>For research use only.</strong></p>
           <p>${esc(product.title.replace(" 10mg", ""))} is not for human consumption and is not intended for medical, veterinary, therapeutic, diagnostic, cosmetic, or clinical use.</p>
@@ -927,15 +1051,19 @@ function productPage(product) {
           ${related.map((item) => productCard(item, "../")).join("")}
         </div>
       </section>
+      <div class="mobile-sticky-cta"><div><strong>${esc(product.price)}</strong><span>${esc(product.title)}</span></div><a class="btn btn-primary" href="../payment?product=${encodeURIComponent(product.title)}">Order</a></div>
     `
   });
 }
 
 function simplePage(handle, data) {
+  const pathName = handle === "about" ? "about" : handle;
   return layout({
     title: data.title,
     description: data.seo,
-    active: handle === "contact" ? "contact" : handle === "payment" ? "payment" : "",
+    active: handle === "about" ? "about" : handle === "payment" ? "payment" : "",
+    urlPath: pathName,
+    schema: pageSchemas([{ name: data.title, path: pathName }]),
     body: `
       <section class="content-page">
         ${data.body}
@@ -959,6 +1087,67 @@ function redirectPage(target, prefix) {
 </body>
 </html>
 `;
+}
+
+function nestedIndexPage(html) {
+  return html.replace(/href="\.\."/g, 'href="../.."').replace(/\.\.\//g, "../../");
+}
+
+function sitemap() {
+  const today = "2026-05-01";
+  const paths = [
+    "",
+    "products",
+    "collections",
+    "about",
+    "contact",
+    "payment",
+    "shipping",
+    "refund",
+    "privacy",
+    "terms",
+    "faq",
+    "lab-testing-coa",
+    "research-blog",
+    "disclaimer",
+    "data-sharing-opt-out",
+    ...collections.map((collection) => `collections/${collection.handle}`),
+    ...products.map((product) => `products/${product.handle}`)
+  ];
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${paths.map((pathname) => `  <url>
+    <loc>${canonicalUrl(pathname)}</loc>
+    <lastmod>${today}</lastmod>
+  </url>`).join("\n")}
+</urlset>
+`;
+}
+
+function robots() {
+  return `User-agent: *
+Allow: /
+Sitemap: ${SITE_URL}/sitemap.xml
+`;
+}
+
+function vercelConfig() {
+  return JSON.stringify({
+    cleanUrls: true,
+    trailingSlash: false,
+    headers: [
+      {
+        source: "/assets/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable"
+          }
+        ]
+      }
+    ]
+  }, null, 2);
 }
 
 function css() {
@@ -985,6 +1174,7 @@ body {
   color: var(--text);
   background: linear-gradient(180deg, #07080a 0%, var(--bg) 38rem);
   min-height: 100vh;
+  font-size: 17px;
 }
 body.menu-open { overflow: hidden; }
 a { color: inherit; text-decoration: none; }
@@ -1066,12 +1256,12 @@ main { overflow: hidden; }
 }
 
 .hero {
-  min-height: 650px;
+  min-height: 560px;
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
   align-items: center;
   gap: clamp(2rem, 5vw, 5rem);
-  padding: clamp(3rem, 8vw, 7rem) 0;
+  padding: clamp(2.5rem, 6vw, 5.5rem) 0;
 }
 .hero h1,
 .page-hero h1,
@@ -1173,7 +1363,7 @@ main { overflow: hidden; }
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
-  padding: 1rem 0 4rem;
+  padding: 0 0 3rem;
 }
 .trust-band div,
 .confidence-grid div,
@@ -1382,6 +1572,43 @@ details p {
   font-size: 1.05rem;
 }
 
+.quick-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.quick-category-card {
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+.quick-category-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.quick-category-card span {
+  color: var(--green);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.quick-category-card h3 {
+  margin: 1rem 0 0.55rem;
+  font-size: 1.35rem;
+}
+.quick-category-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 .page-hero {
   padding: clamp(4rem, 8vw, 7rem) 0 3rem;
   text-align: center;
@@ -1444,6 +1671,37 @@ select {
   border-radius: var(--radius);
   background: var(--panel);
 }
+.product-gallery {
+  display: grid;
+  gap: 0.75rem;
+}
+.gallery-thumbs {
+  display: grid;
+  grid-template-columns: 82px repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.gallery-thumb,
+.gallery-proof {
+  min-height: 74px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--soft);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-align: center;
+}
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+.gallery-thumb.is-active {
+  border-color: var(--red);
+}
 .detail-copy h1 {
   margin: 0 0 1rem;
   font-size: 4.35rem;
@@ -1504,6 +1762,26 @@ select {
   font-size: 0.92rem;
   line-height: 1.5;
 }
+.benefit-list {
+  display: grid;
+  gap: 0.55rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.benefit-list li {
+  color: var(--soft);
+  line-height: 1.45;
+}
+.benefit-list li::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+  margin-right: 0.55rem;
+  border-radius: 999px;
+  background: var(--green);
+}
 .variant-box { margin-top: 1.2rem; padding: 1rem; }
 .variant-box h2 { margin-top: 0; }
 .variant-grid,
@@ -1523,6 +1801,61 @@ select {
   gap: 1rem;
 }
 .split-section > div { padding: 1.5rem; }
+.product-info-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 1rem;
+  align-items: start;
+}
+.product-accordion details,
+.trust-stack > div {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+.product-accordion details {
+  padding: 0;
+  overflow: hidden;
+}
+.product-accordion summary {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  list-style: none;
+}
+.product-accordion summary::-webkit-details-marker { display: none; }
+.product-accordion summary::after {
+  content: "+";
+  color: var(--red);
+  font-size: 1.2rem;
+}
+.product-accordion details[open] summary::after { content: "-"; }
+.product-accordion details > p,
+.product-accordion details > ul {
+  margin: 0;
+  padding: 0 1rem 1rem;
+}
+.trust-stack {
+  display: grid;
+  gap: 1rem;
+}
+.trust-stack > div {
+  padding: 1.2rem;
+}
+.trust-stack strong {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.trust-stack p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.mobile-sticky-cta {
+  display: none;
+}
 .spec-list { padding-left: 1.2rem; }
 .product-copy { padding-top: 0; }
 .copy-panel {
@@ -1677,6 +2010,7 @@ summary {
   .collection-hero,
   .product-detail,
   .split-section,
+  .product-info-section,
   .spotlight-section,
   .quality-section {
     grid-template-columns: 1fr;
@@ -1686,6 +2020,7 @@ summary {
   .collection-grid,
   .product-grid,
   .small-grid,
+  .quick-category-grid,
   .payment-steps,
   .site-footer {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1699,6 +2034,7 @@ summary {
 }
 
 @media (max-width: 620px) {
+  body { font-size: 18px; padding-bottom: 86px; }
   .topbar { font-size: 0.68rem; }
   .brand img { width: 148px; }
   .site-header { padding-inline: 1rem; }
@@ -1715,13 +2051,14 @@ summary {
   .hero h1,
   .page-hero h1,
   .collection-hero h1,
-  .detail-copy h1 { font-size: 2.5rem; line-height: 1; }
+  .detail-copy h1 { font-size: 2.7rem; line-height: 1; }
   .trust-band,
   .confidence-grid,
   .collection-grid,
   .product-grid,
   .small-grid,
   .hero-metrics,
+  .quick-category-grid,
   .quality-list,
   .payment-steps,
   .variant-grid,
@@ -1751,6 +2088,42 @@ summary {
   }
   .card-order { width: 100%; }
   .copy-panel h2 { font-size: 2rem; }
+  .btn,
+  .card-order {
+    min-height: 54px;
+    font-size: 0.84rem;
+  }
+  .quick-category-card { min-height: 180px; }
+  .gallery-thumbs { grid-template-columns: 76px 1fr; }
+  .gallery-proof:last-child { grid-column: 1 / -1; }
+  .mobile-sticky-cta {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 80;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--line);
+    background: rgba(3, 4, 7, 0.96);
+    backdrop-filter: blur(16px);
+  }
+  .mobile-sticky-cta strong {
+    display: block;
+    font-size: 1rem;
+  }
+  .mobile-sticky-cta span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+  .mobile-sticky-cta .btn {
+    min-height: 48px;
+    padding-inline: 1rem;
+  }
 }
 `;
 }
@@ -1873,32 +2246,34 @@ write("products.html", productsPage());
 write("collections/index.html", collectionsIndex());
 
 for (const collection of collections) {
-  write(`collections/${collection.handle}.html`, collectionPage(collection));
-  write(`collections/${collection.handle}/index.html`, redirectPage(`${collection.handle}.html`, "../"));
+  const html = collectionPage(collection);
+  write(`collections/${collection.handle}.html`, html);
+  write(`collections/${collection.handle}/index.html`, nestedIndexPage(html));
 }
 
 for (const product of products) {
-  write(`products/${product.handle}.html`, productPage(product));
-  write(`products/${product.handle}/index.html`, redirectPage(`${product.handle}.html`, "../"));
+  const html = productPage(product);
+  write(`products/${product.handle}.html`, html);
+  write(`products/${product.handle}/index.html`, nestedIndexPage(html));
 }
 
 // Keep the common Tesamorelin spelling reachable while the visible page uses the
 // customer's current product spelling, Tesamoralin.
-write("products/tesamorelin-10mg.html", redirectPage("tesamoralin-10mg.html", "./"));
-write("products/tesamorelin-10mg/index.html", redirectPage("tesamoralin-10mg.html", "../"));
+write("products/tesamorelin-10mg.html", redirectPage("tesamoralin-10mg", "./"));
+write("products/tesamorelin-10mg/index.html", redirectPage("products/tesamoralin-10mg", "/"));
 
 const pageAliases = {
-  "shipping-policy": "shipping.html",
-  "refund-policy": "refund.html",
-  "privacy-policy": "privacy.html",
-  "terms-of-service": "terms.html",
-  "research-blog": "research-blog.html",
-  "data-sharing-opt-out": "data-sharing-opt-out.html",
-  "about-us": "about.html",
-  "contact": "contact.html",
-  "disclaimer": "disclaimer.html",
-  "lab-testing-coa": "lab-testing-coa.html",
-  "faq": "faq.html"
+  "shipping-policy": "shipping",
+  "refund-policy": "refund",
+  "privacy-policy": "privacy",
+  "terms-of-service": "terms",
+  "research-blog": "research-blog",
+  "data-sharing-opt-out": "data-sharing-opt-out",
+  "about-us": "about",
+  "contact": "contact",
+  "disclaimer": "disclaimer",
+  "lab-testing-coa": "lab-testing-coa",
+  "faq": "faq"
 };
 
 for (const [handle, data] of Object.entries(pageData)) {
@@ -1919,12 +2294,16 @@ write("404.html", layout({
       <h1>Page Not Found</h1>
       <p>The page you requested is not available in this static GitHub Pages build.</p>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="./index.html">Return Home</a>
-        <a class="btn btn-secondary" href="./products.html">Browse Products</a>
+        <a class="btn btn-primary" href="./">Return Home</a>
+        <a class="btn btn-secondary" href="./products">Browse Products</a>
       </div>
     </section>
   `
 }));
+
+write("sitemap.xml", sitemap());
+write("robots.txt", robots());
+write("vercel.json", vercelConfig());
 
 console.log(`Generated ${output}`);
 console.log(`Suggested zip path: ${downloadsZip}`);
