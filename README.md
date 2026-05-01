@@ -1,33 +1,36 @@
-# PeptidesCanada Static GitHub Pages Site
+# PeptidesCanada Storefront
 
-This folder is a complete static website version of the PeptidesCanada catalog.
+Static premium storefront deployed from GitHub to Vercel with Vercel API routes for Stripe Checkout, newsletter capture, webhook order tracking, and a private `/admin` dashboard.
 
-## Files
+## Stripe setup
 
-- `index.html` is at the root for GitHub Pages.
-- `products.html` lists all products.
-- `products/` contains individual product pages.
-- `collections/` contains collection pages.
-- `assets/` contains local images and the logo.
-- `style.css` and `script.js` power the static design and simple interactions.
+Add these variables in `Vercel -> Project Settings -> Environment Variables`:
 
-## Upload to GitHub Pages
+- `STRIPE_SECRET_KEY`: Stripe Dashboard -> Developers -> API keys -> Secret key.
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Stripe Dashboard -> Developers -> API keys -> Publishable key.
+- `NEXT_PUBLIC_SITE_URL`: your deployed site URL, for example `https://pepcan.vercel.app`.
+- `STRIPE_WEBHOOK_SECRET`: Stripe Dashboard -> Developers -> Webhooks after adding `/api/stripe-webhook`.
 
-1. Create or open your GitHub repository.
-2. Upload the contents of this folder, not the folder itself.
-3. Make sure `index.html` is directly at the repository root.
-4. Go to repository Settings > Pages.
-5. Select the branch and root folder, then save.
+The frontend never receives `STRIPE_SECRET_KEY`. The cart calls `/api/create-checkout-session`, and the API validates product handles, variants, quantities, and prices server-side before creating the Stripe Checkout session.
 
-## Payment Setup
+## Database setup
 
-The site does not use Shopify checkout. All order buttons redirect to `payment.html`.
+Newsletter subscribers and paid Stripe orders can be tracked in `/admin` after connecting Supabase:
 
-Before publishing, edit:
+1. Create a Supabase project.
+2. Run `supabase-schema.sql` in the Supabase SQL editor.
+3. Add these Vercel environment variables:
+   - `SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `ADMIN_API_KEY`
+4. Visit `/admin` and enter `ADMIN_API_KEY`.
 
-- `payment.html` and replace `REPLACE_WITH_PAYMENT_EMAIL`.
-- `contact.html` and replace the support email placeholder.
+Without Supabase variables, the storefront and Stripe Checkout still work, but subscriber/order persistence is disabled.
 
-## Compliance Note
+## Local checks
 
-All product copy is written for research-use-only positioning and avoids medical, therapeutic, cosmetic, human-use, or disease claims.
+```bash
+npm install
+npm run check
+node build-static-github-pages-site.js
+```
