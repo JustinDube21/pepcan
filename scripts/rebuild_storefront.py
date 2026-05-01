@@ -556,7 +556,7 @@ def header(active: str) -> str:
                 for p in [PRODUCT_BY_HANDLE["bacteriostatic-water-10ml"], PRODUCT_BY_HANDLE["bpc-157"], PRODUCT_BY_HANDLE["cjc-1295-10-mg"]]
             )
             nav.append(
-                f'<div class="nav-dropdown" data-shop-menu><button class="nav-shop-trigger {cls}" type="button" aria-expanded="false" data-shop-toggle>{label}<span>v</span></button><div class="nav-menu mega-menu"><div class="mega-head"><div><strong>Shop by category</strong><p>Find products based on your research goals and peptide category.</p></div><a href="/products">View full catalog</a></div><div class="mega-category-grid">{category_tiles}</div><div class="mega-products"><div><h3>Featured Products</h3><a href="/products">Browse all</a></div>{featured_tiles}</div><a class="mega-cta" href="/products">View full catalog -></a></div></div>'
+                f'<div class="nav-dropdown" data-shop-menu><a class="nav-shop-trigger {cls}" href="/products" aria-expanded="false" data-shop-trigger>{label}<span>v</span></a><div class="nav-menu mega-menu"><div class="mega-head"><div><strong>Shop by category</strong><p>Find products based on your research goals and peptide category.</p></div><a href="/products">View full catalog</a></div><div class="mega-category-grid">{category_tiles}</div><div class="mega-products"><div><h3>Featured Products</h3><a href="/products">Browse all</a></div>{featured_tiles}</div><a class="mega-cta" href="/products">View full catalog -></a></div></div>'
             )
         else:
             nav.append(f'<a class="{cls}" href="{href}">{label}</a>')
@@ -688,7 +688,7 @@ def footer() -> str:
       <section><h3>Company Information</h3><a href="/about">About Us</a><a href="/lab-testing-coa">Lab Testing &amp; COA</a><a href="/research-blog">Research Blog</a><a href="/faq">FAQ</a><a href="/contact">Contact</a></section>
       <section><h3>Policies &amp; Compliance</h3><a href="/terms">Terms of Service</a><a href="/privacy">Privacy Policy</a><a href="/refund">Refund Policy</a><a href="/shipping">Shipping Policy</a><a href="/disclaimer">Disclaimer</a></section>
       <section class="footer-notice"><h3>Research Use Notice</h3><p>All products are for research and laboratory use only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease. Buyer confirms products will not be used in violation of any applicable laws.</p></section>
-      <div class="footer-bottom"><span>&copy; 2026 Peptides Canada. All rights reserved.</span><span>Secure Payment Methods</span><span class="payment-pills">VISA MC AMEX BTC</span></div>
+      <div class="footer-bottom"><span>&copy; 2026 Peptides Canada. All rights reserved.</span><span>Secure Payment Methods</span><span class="payment-pills"><em>Visa</em><em>MC</em><em>Amex</em></span></div>
     </div>
   </footer>
 """
@@ -899,6 +899,70 @@ def render_lab_testing_page() -> None:
     write("lab-testing-coa.html", render_document("Lab Testing & COA | PeptidesCanada", "Learn how PeptidesCanada approaches third-party lab testing, COA documentation, purity verification, and batch-level transparency.", "/lab-testing-coa", "lab", body, extra_ld=[breadcrumb([("Home", "/"), ("Lab Testing & COA", "/lab-testing-coa")])]))
 
 
+def render_contact_page() -> None:
+    body = """
+    <section class="content-page contact-page">
+      <span class="eyebrow">Precision. Transparency. Performance.</span>
+      <h1>Contact PeptidesCanada</h1>
+      <p>If you have questions about our research-use-only products, order status, shipping, product documentation, or general inquiries, the PeptidesCanada support team is here to help.</p>
+      <p>We aim to provide clear, professional, and timely support so customers can get the information they need with confidence.</p>
+
+      <div class="contact-support-grid">
+        <section class="contact-copy-card">
+          <h2>Customer Support</h2>
+          <p>Our team aims to respond to all inquiries within 24 hours during regular business days.</p>
+          <ul>
+            <li>Email support available</li>
+            <li>Order and shipping assistance</li>
+            <li>Product documentation support</li>
+            <li>COA request support when applicable</li>
+            <li>Professional assistance for research customers</li>
+          </ul>
+        </section>
+        <section class="contact-copy-card accent">
+          <span class="eyebrow">Support Email</span>
+          <h2>support@peptidescanada.store</h2>
+          <p>Include your product name, order number, and any batch information available so our team can review your request faster.</p>
+          <a class="btn btn-primary" href="mailto:support@peptidescanada.store">Email Support</a>
+        </section>
+      </div>
+
+      <section class="contact-copy-card">
+        <h2>What We Can Help With</h2>
+        <p>You can contact us for support related to:</p>
+        <ul class="check-list">
+          <li>Order confirmation and tracking information</li>
+          <li>Shipping questions within Canada</li>
+          <li>Product availability</li>
+          <li>Batch information and COA requests when available</li>
+          <li>Website, account, or checkout questions</li>
+          <li>General research-use-only product inquiries</li>
+        </ul>
+      </section>
+
+      <section class="contact-copy-card">
+        <h2>Product Documentation Requests</h2>
+        <p>If you are contacting us about product documentation, please include the product name, order number if applicable, and any batch information available on your product label or order details.</p>
+        <p>This helps our team review your request faster and provide the most accurate information available.</p>
+      </section>
+
+      <section class="contact-copy-card important">
+        <h2>Important Notice</h2>
+        <p>All products sold by PeptidesCanada are intended strictly for research and laboratory use only.</p>
+        <p>They are not for human consumption and are not intended to diagnose, treat, cure, or prevent any disease.</p>
+        <p>PeptidesCanada does not provide medical advice, dosage guidance, human-use instructions, or treatment recommendations.</p>
+      </section>
+
+      <form class="updates-card contact-updates-card" data-subscribe-form>
+        <div><span class="eyebrow">Research updates</span><h2>Join Our Research Updates</h2><p>New product alerts, restock notes, and concise research-grade catalog updates.</p></div>
+        <div class="subscribe-fields"><input type="email" name="email" placeholder="Email address" autocomplete="email" required><button class="btn btn-primary" type="submit">Subscribe</button></div>
+        <p class="form-message" data-form-message></p>
+      </form>
+    </section>
+"""
+    write("contact.html", render_document("Contact PeptidesCanada | PeptidesCanada", "Contact PeptidesCanada for research-use-only product questions, order status, shipping support, COA requests, and product documentation inquiries.", "/contact", "contact", body, extra_ld=[breadcrumb([("Home", "/"), ("Contact", "/contact")])]))
+
+
 def update_existing_shells() -> None:
     html_files = [p for p in ROOT.rglob("*.html") if "github-pages-static-site-complete" not in str(p)]
     for path in html_files:
@@ -919,7 +983,7 @@ def update_existing_shells() -> None:
             active = "blog"
         elif "contact" in rel:
             active = "contact"
-        text = re.sub(r'<div class="topbar">.*?</header>', header(active), text, flags=re.S)
+        text = re.sub(r'\s*<div class="(?:topbar|promo-bar)".*?</header>', "\n" + header(active), text, flags=re.S)
         text = re.sub(r'\s*<footer class="site-footer">.*?</footer>', "\n" + footer(), text, flags=re.S)
         text = re.sub(r'<link rel="stylesheet" href="[^"]*style\.css">', '<link rel="stylesheet" href="/style.css">', text)
         if "window.PEPCAN_CATALOG" in text:
@@ -938,6 +1002,7 @@ def main() -> None:
     render_product_pages()
     render_simple_pages()
     render_lab_testing_page()
+    render_contact_page()
     update_existing_shells()
     print("Storefront rebuilt with", len(PRODUCTS), "products and", len(COLLECTIONS), "collections.")
 

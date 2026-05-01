@@ -54,22 +54,47 @@
   }
 
   const shopMenus = Array.from(document.querySelectorAll("[data-shop-menu]"));
+  const shopCloseTimers = new WeakMap();
+  function openShopMenu(menu) {
+    if (!menu) return;
+    const timer = shopCloseTimers.get(menu);
+    if (timer) window.clearTimeout(timer);
+    closeShopMenus(menu);
+    menu.classList.add("is-open");
+    const trigger = menu.querySelector("[data-shop-trigger]");
+    if (trigger) trigger.setAttribute("aria-expanded", "true");
+  }
+  function scheduleShopClose(menu) {
+    if (!menu) return;
+    const timer = shopCloseTimers.get(menu);
+    if (timer) window.clearTimeout(timer);
+    shopCloseTimers.set(
+      menu,
+      window.setTimeout(() => {
+        menu.classList.remove("is-open");
+        const trigger = menu.querySelector("[data-shop-trigger]");
+        if (trigger) trigger.setAttribute("aria-expanded", "false");
+      }, 420)
+    );
+  }
   function closeShopMenus(except) {
     shopMenus.forEach((menu) => {
       if (except && menu === except) return;
+      const timer = shopCloseTimers.get(menu);
+      if (timer) window.clearTimeout(timer);
       menu.classList.remove("is-open");
-      const trigger = menu.querySelector("[data-shop-toggle]");
+      const trigger = menu.querySelector("[data-shop-trigger]");
       if (trigger) trigger.setAttribute("aria-expanded", "false");
     });
   }
-  document.querySelectorAll("[data-shop-toggle]").forEach((button) => {
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      const menu = button.closest("[data-shop-menu]");
-      const open = !menu.classList.contains("is-open");
-      closeShopMenus(menu);
-      menu.classList.toggle("is-open", open);
-      button.setAttribute("aria-expanded", String(open));
+  shopMenus.forEach((menu) => {
+    menu.addEventListener("mouseenter", () => openShopMenu(menu));
+    menu.addEventListener("mouseleave", () => scheduleShopClose(menu));
+    menu.addEventListener("focusin", () => openShopMenu(menu));
+    menu.addEventListener("focusout", () => {
+      window.setTimeout(() => {
+        if (!menu.contains(document.activeElement)) scheduleShopClose(menu);
+      }, 20);
     });
   });
   document.addEventListener("click", (event) => {
@@ -254,6 +279,7 @@
     cards.forEach((card) => {
       const show = (!term || card.dataset.title.includes(term)) && (activeCategory === "all" || card.dataset.category === activeCategory);
       card.hidden = !show;
+      card.classList.toggle("is-filtered-out", !show);
       if (show) visible += 1;
     });
     const grid = document.querySelector("[data-product-grid]");
