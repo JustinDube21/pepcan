@@ -13,6 +13,7 @@ create table if not exists public.subscribers (
 
 create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete set null,
   stripe_session_id text unique,
   customer_name text,
   customer_email text,
@@ -25,9 +26,37 @@ create table if not exists public.orders (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.users_profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.orders
+add column if not exists user_id uuid references auth.users(id) on delete set null;
+
 create index if not exists subscribers_created_at_idx on public.subscribers (created_at desc);
 create index if not exists orders_created_at_idx on public.orders (created_at desc);
 create index if not exists orders_customer_email_idx on public.orders (customer_email);
+create index if not exists orders_user_id_idx on public.orders (user_id);
+create index if not exists users_profiles_email_idx on public.users_profiles (email);
+
+alter table public.users_profiles enable row level security;
+
+drop policy if exists "Users can read own profile" on public.users_profiles;
+create policy "Users can read own profile"
+on public.users_profiles
+for select
+to authenticated
+using (auth.uid() = id);
+
+drop policy if exists "Users can update own profile" on public.users_profiles;
+create policy "Users can update own profile"
+on public.users_profiles
+for update
+to authenticated
+using (auth.uid() = id)
+with check (auth.uid() = id);
 
 create or replace function public.set_updated_at()
 returns trigger as $$

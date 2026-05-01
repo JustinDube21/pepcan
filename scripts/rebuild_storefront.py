@@ -568,7 +568,7 @@ def header(active: str) -> str:
     <nav class="primary-nav" data-nav>{"".join(nav)}</nav>
     <div class="header-actions">
       <button class="icon-btn" type="button" aria-label="Search products" data-search-open>{icon("search")}</button>
-      <a class="icon-btn" href="/contact" aria-label="Account and support">{icon("user")}</a>
+      <a class="icon-btn" href="/account" aria-label="Account dashboard">{icon("user")}</a>
       <button class="icon-btn cart-icon" type="button" aria-label="Open cart" data-cart-open>{icon("cart")}<span class="cart-count" data-cart-count>0</span></button>
     </div>
   </header>

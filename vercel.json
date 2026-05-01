@@ -1,7 +1,5 @@
 {
-  "buildCommand": null,
   "cleanUrls": true,
-  "outputDirectory": ".",
   "trailingSlash": false,
   "headers": [
     {
