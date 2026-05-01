@@ -356,6 +356,8 @@ for product in PRODUCTS:
     product["collection_title"] = COLLECTION_BY_HANDLE[product["collection"]]["title"]
     product["kit_price"] = float(int(product["price"] * 7) + 0.99) if product["kit"] else None
 
+PRODUCT_BY_HANDLE = {product["handle"]: product for product in PRODUCTS}
+
 
 def money(value: float) -> str:
     return f"${value:,.2f}"
@@ -502,6 +504,8 @@ def icon(name: str) -> str:
         "truck": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h12v10H3z"></path><path d="M15 10h4l2 3v4h-6z"></path><circle cx="7" cy="19" r="2"></circle><circle cx="18" cy="19" r="2"></circle></svg>',
         "bag": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 13H7z"></path><path d="M9 8a3 3 0 0 1 6 0"></path></svg>',
         "doc": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"></path><path d="M14 3v6h5"></path><path d="M10 13h6M10 17h6"></path></svg>',
+        "instagram": '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17" cy="7" r="1"></circle></svg>',
+        "tiktok": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.2a4.2 4.2 0 1 1-4.2-4.2"></path><path d="M14 5c1.2 2.3 2.8 3.5 5 3.8"></path></svg>',
     }
     return icons[name]
 
@@ -543,11 +547,17 @@ def header(active: str) -> str:
     for label, href, key in links:
         cls = "active" if active == key or (active == "collections" and key == "products") else ""
         if key == "products":
-            menu = "".join(
-                f'<a href="/collections/{c["handle"]}"><img src="/assets/collections/{c["image"]}" alt="{esc(c["title"])} collection" width="44" height="44" loading="lazy"><span>{esc(c["title"])}</span></a>'
+            category_tiles = "".join(
+                f'<a class="mega-category" href="/collections/{c["handle"]}"><img src="/assets/collections/{c["image"]}" alt="{esc(c["title"])} collection" width="92" height="92" loading="lazy"><span><em>{len([p for p in PRODUCTS if p["collection"] == c["handle"]])} products</em><strong>{esc(c["title"])}</strong><small>{esc(c["short"])}</small></span></a>'
                 for c in COLLECTIONS
             )
-            nav.append(f'<div class="nav-dropdown"><a class="{cls}" href="{href}">{label}<span>v</span></a><div class="nav-menu">{menu}<a class="nav-menu-all" href="/products">View full catalog</a></div></div>')
+            featured_tiles = "".join(
+                f'<a class="mega-product" href="/products/{p["handle"]}"><img src="/assets/products/{p["image"]}" alt="{esc(p["title"])} product vial" width="84" height="84" loading="lazy"><span><strong>{esc(p["title"])}</strong><em>{money(p["price"])}</em><small>View product</small></span></a>'
+                for p in [PRODUCT_BY_HANDLE["bacteriostatic-water-10ml"], PRODUCT_BY_HANDLE["bpc-157"], PRODUCT_BY_HANDLE["cjc-1295-10-mg"]]
+            )
+            nav.append(
+                f'<div class="nav-dropdown" data-shop-menu><button class="nav-shop-trigger {cls}" type="button" aria-expanded="false" data-shop-toggle>{label}<span>v</span></button><div class="nav-menu mega-menu"><div class="mega-head"><div><strong>Shop by category</strong><p>Find products based on your research goals and peptide category.</p></div><a href="/products">View full catalog</a></div><div class="mega-category-grid">{category_tiles}</div><div class="mega-products"><div><h3>Featured Products</h3><a href="/products">Browse all</a></div>{featured_tiles}</div><a class="mega-cta" href="/products">View full catalog -></a></div></div>'
+            )
         else:
             nav.append(f'<a class="{cls}" href="{href}">{label}</a>')
     return f"""
@@ -595,10 +605,11 @@ def product_card(product: dict) -> str:
 
 
 def category_card(collection: dict) -> str:
+    count = len([p for p in PRODUCTS if p["collection"] == collection["handle"]])
     return f"""
     <a class="category-card" href="/collections/{collection["handle"]}">
-      <img src="/assets/collections/{collection["image"]}" alt="{esc(collection["title"])} collection image" width="150" height="150" loading="lazy" decoding="async">
-      <span>{esc(collection["tag"])}</span><h3>{esc(collection["label"])}</h3><p>{esc(collection["description"])}</p><strong>View category</strong>
+      <img src="/assets/collections/{collection["image"]}" alt="{esc(collection["title"])} collection image" width="700" height="520" loading="lazy" decoding="async">
+      <span>{count} products</span><h3>{esc(collection["title"])}</h3><p>Browse one of the most relevant product paths for first-time visitors.</p><strong>Explore collection</strong>
     </a>
 """
 
@@ -622,7 +633,7 @@ def compact_product(product: dict) -> str:
 
 
 def seo_head(title: str, description: str, canonical: str, robots: str = "index, follow", extra_ld: list | None = None) -> str:
-    ld = [{"@context": "https://schema.org", "@type": "Organization", "name": "PeptidesCanada", "url": BASE_URL, "logo": f"{BASE_URL}/assets/logo.svg"}]
+    ld = [{"@context": "https://schema.org", "@type": "Organization", "name": "PeptidesCanada", "url": BASE_URL, "logo": f"{BASE_URL}/assets/logo.svg", "sameAs": ["https://www.instagram.com/peptidescanadaofficial/", "https://www.tiktok.com/@peptidescanada.store"]}]
     if extra_ld:
         ld.extend(extra_ld)
     return f"""  <title>{esc(title)}</title>
@@ -661,13 +672,24 @@ def render_document(title: str, description: str, canonical: str, active: str, b
 
 
 def footer() -> str:
-    return """
+    return f"""
   <footer class="site-footer">
-    <div><img src="/assets/logo.svg" alt="PeptidesCanada" width="180" height="54" decoding="async"><p>Premium research peptide catalog built for transparency, documentation, and responsible research-use-only browsing.</p></div>
-    <div><h3>Catalog</h3><a href="/products">All Products</a><a href="/collections/healing">Healing</a><a href="/collections/metabolic">Metabolic</a><a href="/collections/nootropics">Nootropics</a></div>
-    <div><h3>Support</h3><a href="/contact">Contact</a><a href="/shipping">Shipping Policy</a><a href="/refund">Refund Policy</a><a href="/payment">Checkout</a></div>
-    <div><h3>Trust</h3><a href="/lab-testing-coa">Lab Testing and COA</a><a href="/disclaimer">Disclaimer</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></div>
-    <p class="footer-bottom">Research use only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease.</p>
+    <div class="footer-inner">
+      <section class="footer-brand">
+        <img src="/assets/logo.svg" alt="PeptidesCanada" width="190" height="58" decoding="async">
+        <p>Canada's trusted source for premium research peptides. Every product is HPLC tested, third-party verified, and shipped fast from within Canada.</p>
+        <strong>Premium research peptides with verified purity standards.</strong>
+        <div class="social-links">
+          <a href="https://www.instagram.com/peptidescanadaofficial/" target="_blank" rel="noopener noreferrer" aria-label="Peptides Canada Instagram">{icon("instagram")}</a>
+          <a href="https://www.tiktok.com/@peptidescanada.store" target="_blank" rel="noopener noreferrer" aria-label="Peptides Canada TikTok">{icon("tiktok")}</a>
+        </div>
+      </section>
+      <section><h3>Shop Collections</h3><a href="/products">All Products</a><a href="/collections/anti-aging">Anti-Aging</a><a href="/collections/healing">Healing</a><a href="/collections/metabolic">Metabolic</a><a href="/collections/nootropics">Nootropics</a><a href="/collections/performance">Performance</a><a href="/collections/premium-blend">Premium Blend</a><a href="/collections/reconstitution">Reconstitution</a><a href="/collections/tanning">Tanning</a></section>
+      <section><h3>Company Information</h3><a href="/about">About Us</a><a href="/lab-testing-coa">Lab Testing &amp; COA</a><a href="/research-blog">Research Blog</a><a href="/faq">FAQ</a><a href="/contact">Contact</a></section>
+      <section><h3>Policies &amp; Compliance</h3><a href="/terms">Terms of Service</a><a href="/privacy">Privacy Policy</a><a href="/refund">Refund Policy</a><a href="/shipping">Shipping Policy</a><a href="/disclaimer">Disclaimer</a></section>
+      <section class="footer-notice"><h3>Research Use Notice</h3><p>All products are for research and laboratory use only. Not for human consumption. Not intended to diagnose, treat, cure, or prevent any disease. Buyer confirms products will not be used in violation of any applicable laws.</p></section>
+      <div class="footer-bottom"><span>&copy; 2026 Peptides Canada. All rights reserved.</span><span>Secure Payment Methods</span><span class="payment-pills">VISA MC AMEX BTC</span></div>
+    </div>
   </footer>
 """
 
@@ -690,7 +712,24 @@ def breadcrumb(items: list[tuple[str, str]]) -> dict:
 
 
 def render_home() -> None:
-    featured = PRODUCTS[:4] + [PRODUCTS[9], PRODUCTS[10], PRODUCTS[14]]
+    featured = [
+        PRODUCT_BY_HANDLE["ghk-cu-50mg"],
+        PRODUCT_BY_HANDLE["sermorelin"],
+        PRODUCT_BY_HANDLE["bpc-157"],
+        PRODUCT_BY_HANDLE["bacteriostatic-water-10ml"],
+        PRODUCT_BY_HANDLE["cjc-1295-10-mg"],
+        PRODUCT_BY_HANDLE["glow-blend-50mg"],
+        PRODUCT_BY_HANDLE["ipamorelin-10mg"],
+        PRODUCT_BY_HANDLE["klow-blend-80mg"],
+        PRODUCT_BY_HANDLE["melanotan-2-10mg"],
+        PRODUCT_BY_HANDLE["mots-c-10mg"],
+        PRODUCT_BY_HANDLE["selank-10mg"],
+    ]
+    assurances = [
+        ("shield", "Quality controlled", "High-purity inventory handled with consistency-first standards."),
+        ("bag", "Trusted purchase experience", "Secure checkout, clear policies, and discreet order handling from cart to delivery."),
+        ("truck", "Fast Canadian shipping", "Domestic fulfillment designed to reduce friction at checkout."),
+    ]
     confidence = [
         ("shield", "Third-Party Lab Tested", "Verified quality standards for serious research workflows."),
         ("truck", "Fast Canadian Shipping", "Domestic fulfillment designed for faster delivery across Canada."),
@@ -699,12 +738,12 @@ def render_home() -> None:
     ]
     body = f"""
     <section class="hero shopify-hero">
-      <div class="hero-copy"><span class="hero-badge"><i></i> Canada's #1 research peptide supplier</span><h1>Premium Research Peptides in Canada</h1><p>HPLC-verified, high-quality peptides with 99%+ purity standards where listed. Fast domestic shipping across Canada and a research-use-only catalog built for confident product discovery.</p><div class="hero-actions"><a class="btn btn-primary" href="/products">Shop Now</a><a class="btn btn-secondary" href="/lab-testing-coa">View Lab Testing</a></div><div class="hero-metrics"><span><strong>99%+</strong><em>Purity standard</em></span><span><strong>24h</strong><em>Fast dispatch target</em></span><span><strong>Canada</strong><em>Domestic fulfillment</em></span></div></div>
-      <aside class="hero-product-card"><div class="hero-product-image"><img src="/assets/products/bacteriostatic-water-10ml.webp" alt="Bacteriostatic Water 10ml vial in a clean laboratory setting" width="900" height="900" loading="eager" decoding="async"></div><div class="hero-product-meta"><span>Recommended starting point</span><h2>Bacteriostatic Water 10ml</h2><div><em>Research use only</em><em>Secure checkout</em></div></div></aside>
+      <div class="hero-copy"><span class="hero-badge"><i></i> Canada's #1 research peptide supplier</span><h1>Premium Research Peptides in Canada</h1><p>HPLC-verified, high-quality peptides with 99%+ purity. Fast domestic shipping across Canada. Trusted by researchers nationwide.</p><div class="hero-tags"><span>99%+ purity standard</span><span>Third-party lab focus</span><span>Domestic Canadian shipping</span></div><div class="hero-actions"><a class="btn btn-primary" href="/products">Shop Now</a><a class="btn btn-secondary" href="/lab-testing-coa">View Lab Testing</a></div><div class="hero-metrics"><span><strong>99%+</strong><em>Purity verified</em></span><span><strong>24h</strong><em>Fast dispatch target</em></span><span><strong>Canada</strong><em>Domestic fulfillment</em></span></div></div>
+      <aside class="hero-product-card"><span class="eyebrow">Featured product spotlight</span><div class="hero-product-image"><img src="/assets/products/bacteriostatic-water-10ml.webp" alt="Bacteriostatic Water 10ml vial in a clean laboratory setting" width="900" height="900" loading="eager" decoding="async"></div><div class="hero-product-meta"><span>Recommended starting point</span><h2>Bacteriostatic Water 10ml</h2><div><em>Research use only</em><em>Secure checkout</em></div></div></aside>
     </section>
-    <section class="trust-strip"><span>Third-party tested</span><span>Canada-wide shipping</span><span>Research use only</span><span>Secure checkout</span></section>
-    <section class="section category-showcase"><div class="section-heading split-heading"><div><span class="eyebrow">Shop by category</span><h2>Research categories customers expect.</h2></div><a href="/collections">View all categories</a></div><div class="category-grid image-categories">{"".join(category_card(c) for c in COLLECTIONS[:4])}</div></section>
-    <section class="section product-carousel-section"><div class="section-heading split-heading"><div><span class="eyebrow">Featured products</span><h2>Featured research compounds.</h2></div><div class="carousel-actions"><button type="button" aria-label="Previous products" data-carousel-prev="home-products">Prev</button><button type="button" aria-label="Next products" data-carousel-next="home-products">Next</button><a href="/products">Browse full catalog</a></div></div><div class="product-carousel" id="home-products" data-product-carousel>{"".join(product_card(p) for p in featured)}</div></section>
+    <section class="trust-strip assurance-strip">{"".join(f'<article><span>{icon(i)}</span><div><strong>{esc(t)}</strong><p>{esc(d)}</p></div></article>' for i,t,d in assurances)}</section>
+    <section class="section category-showcase"><div class="section-heading split-heading"><div><span class="eyebrow">Shop by category</span><h2>Browse research categories</h2></div><a href="/collections">View full catalog</a></div><div class="category-grid image-categories">{"".join(category_card(c) for c in COLLECTIONS[:3])}</div></section>
+    <section class="section product-carousel-section"><div class="section-heading split-heading"><div><span class="eyebrow">Featured products</span><h2>Featured research compounds.</h2></div><div class="carousel-actions"><a href="/products">Browse full catalog</a></div></div><div class="product-carousel-frame"><button class="carousel-arrow carousel-arrow-prev" type="button" aria-label="Previous products" data-carousel-prev="home-products">&lsaquo;</button><div class="product-carousel" id="home-products" data-product-carousel>{"".join(product_card(p) for p in featured)}</div><button class="carousel-arrow carousel-arrow-next" type="button" aria-label="Next products" data-carousel-next="home-products">&rsaquo;</button></div></section>
     <section class="section confidence-section"><div class="section-heading centered"><span class="eyebrow">Final confidence check</span><h2>Why Researchers Choose Us</h2></div><div class="confidence-grid">{"".join(f'<article class="confidence-card"><span>{icon(i)}</span><h3>{esc(t)}</h3><p>{esc(d)}</p></article>' for i,t,d in confidence)}</div><form class="updates-card" data-subscribe-form><div><span class="eyebrow">Research updates</span><h2>Join Our Research Updates</h2><p>New product alerts, restock notes, and concise research-grade catalog updates.</p></div><div class="subscribe-fields"><input type="text" name="fullName" placeholder="Full name" autocomplete="name"><input type="email" name="email" placeholder="Email address" autocomplete="email" required><button class="btn btn-primary" type="submit">Subscribe</button></div><p class="form-message" data-form-message></p></form></section>
 """
     write("index.html", render_document("Research Peptides Canada | PeptidesCanada", "Premium research peptides Canada catalog with research compounds, clear pricing, lab-testing context, Stripe Checkout, and Canada-wide fulfillment.", "/", "home", body, extra_ld=[breadcrumb([("Home", "/")])]))
@@ -793,6 +832,73 @@ def render_simple_pages() -> None:
     write("payment.html", render_document("Secure Stripe Checkout | PeptidesCanada", "Review your PeptidesCanada research-use-only cart and continue to secure Stripe Checkout.", "/payment", "products", payment_body, extra_ld=[breadcrumb([("Home", "/"), ("Checkout", "/payment")])]))
 
 
+def render_lab_testing_page() -> None:
+    body = """
+    <section class="content-page lab-testing-page">
+      <span class="eyebrow">Our Commitment to Quality &amp; Transparency</span>
+      <h1>Lab Testing &amp; Certificates of Analysis (COA)</h1>
+      <p>At Peptides Canada, product quality is verified through structured testing processes.</p>
+      <p>Each batch undergoes third-party laboratory analysis to confirm purity, identity, consistency, and compliance with quality standards.</p>
+      <p>We prioritize transparency so you can clearly understand what you are receiving.</p>
+
+      <h2>What is a Certificate of Analysis (COA)?</h2>
+      <p>A Certificate of Analysis (COA) is an official laboratory document that provides detailed information about a specific batch of a product.</p>
+      <p>It typically includes:</p>
+      <ul>
+        <li>Purity level, such as 98-99%+</li>
+        <li>Molecular identity confirmation</li>
+        <li>Batch or lot number</li>
+        <li>Analytical methods used, including HPLC and Mass Spectrometry</li>
+        <li>Date of testing and validation</li>
+      </ul>
+      <p>Each COA is specific to a batch, not a general product.</p>
+
+      <h2>Our Testing Process</h2>
+      <ol class="lab-process">
+        <li><strong>Batch Production</strong><span>Each product is manufactured in controlled conditions.</span></li>
+        <li><strong>Third-Party Laboratory Testing</strong><span>Independent laboratories conduct High Performance Liquid Chromatography (HPLC) and Mass Spectrometry (MS).</span></li>
+        <li><strong>Quality Verification</strong><span>Results are reviewed to ensure purity meets internal standards and no significant impurities or inconsistencies are present.</span></li>
+        <li><strong>Batch Release</strong><span>Only batches that meet all criteria are made available.</span></li>
+      </ol>
+
+      <h2>Why Lab Testing Matters</h2>
+      <p>Proper testing is essential for ensuring product reliability.</p>
+      <p>Lab-tested products provide consistent composition, verified purity levels, and greater confidence in research applications.</p>
+      <p>Without third-party validation, product claims cannot be independently confirmed.</p>
+
+      <h2>Access to COAs</h2>
+      <p>Batch-specific COAs are available for transparency.</p>
+      <p>You can access them directly on individual product pages or by request via email at <a href="mailto:support@peptidescanada.store">support@peptidescanada.store</a>.</p>
+      <p>It is recommended to match the batch number on your product with the corresponding COA.</p>
+
+      <h2>Information Included in a COA</h2>
+      <ul>
+        <li>Product name</li>
+        <li>Batch or lot number</li>
+        <li>Purity percentage from HPLC results</li>
+        <li>Chromatogram data</li>
+        <li>Testing methodology</li>
+        <li>Analyst validation</li>
+        <li>Date of analysis</li>
+      </ul>
+
+      <h2>Important Notice</h2>
+      <p>All products available on this website are intended for research purposes only.</p>
+      <p>They are not approved for human consumption and are not intended to diagnose, treat, cure, or prevent any disease.</p>
+
+      <h2>Why Choose Peptides Canada</h2>
+      <ul class="check-list">
+        <li>Third-party laboratory tested</li>
+        <li>Batch-level transparency</li>
+        <li>High purity standards</li>
+        <li>Reliable sourcing</li>
+        <li>Consistent quality control</li>
+      </ul>
+    </section>
+"""
+    write("lab-testing-coa.html", render_document("Lab Testing & COA | PeptidesCanada", "Learn how PeptidesCanada approaches third-party lab testing, COA documentation, purity verification, and batch-level transparency.", "/lab-testing-coa", "lab", body, extra_ld=[breadcrumb([("Home", "/"), ("Lab Testing & COA", "/lab-testing-coa")])]))
+
+
 def update_existing_shells() -> None:
     html_files = [p for p in ROOT.rglob("*.html") if "github-pages-static-site-complete" not in str(p)]
     for path in html_files:
@@ -814,6 +920,7 @@ def update_existing_shells() -> None:
         elif "contact" in rel:
             active = "contact"
         text = re.sub(r'<div class="topbar">.*?</header>', header(active), text, flags=re.S)
+        text = re.sub(r'\s*<footer class="site-footer">.*?</footer>', "\n" + footer(), text, flags=re.S)
         text = re.sub(r'<link rel="stylesheet" href="[^"]*style\.css">', '<link rel="stylesheet" href="/style.css">', text)
         if "window.PEPCAN_CATALOG" in text:
             text = re.sub(r'<script src="[^"]*script\.js" defer></script>', '<script src="/script.js" defer></script>', text)
@@ -830,6 +937,7 @@ def main() -> None:
     render_collections()
     render_product_pages()
     render_simple_pages()
+    render_lab_testing_page()
     update_existing_shells()
     print("Storefront rebuilt with", len(PRODUCTS), "products and", len(COLLECTIONS), "collections.")
 

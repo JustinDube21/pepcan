@@ -53,6 +53,29 @@
     });
   }
 
+  const shopMenus = Array.from(document.querySelectorAll("[data-shop-menu]"));
+  function closeShopMenus(except) {
+    shopMenus.forEach((menu) => {
+      if (except && menu === except) return;
+      menu.classList.remove("is-open");
+      const trigger = menu.querySelector("[data-shop-toggle]");
+      if (trigger) trigger.setAttribute("aria-expanded", "false");
+    });
+  }
+  document.querySelectorAll("[data-shop-toggle]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      const menu = button.closest("[data-shop-menu]");
+      const open = !menu.classList.contains("is-open");
+      closeShopMenus(menu);
+      menu.classList.toggle("is-open", open);
+      button.setAttribute("aria-expanded", String(open));
+    });
+  });
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-shop-menu]")) closeShopMenus();
+  });
+
   function openCart() {
     body.classList.add("cart-open");
     renderCart();
@@ -68,6 +91,7 @@
     if (event.key === "Escape") {
       closeCart();
       body.classList.remove("search-open");
+      closeShopMenus();
     }
   });
 
@@ -273,7 +297,11 @@
       const id = button.dataset.carouselPrev || button.dataset.carouselNext;
       const carousel = document.getElementById(id);
       if (!carousel) return;
-      carousel.scrollBy({ left: (button.dataset.carouselNext ? 1 : -1) * Math.min(390, carousel.clientWidth * 0.82), behavior: "smooth" });
+      const card = carousel.querySelector(".product-card");
+      const styles = window.getComputedStyle(carousel);
+      const gap = Number.parseFloat(styles.columnGap || styles.gap || "0") || 0;
+      const step = card ? card.getBoundingClientRect().width + gap : carousel.clientWidth;
+      carousel.scrollBy({ left: (button.dataset.carouselNext ? 1 : -1) * step, behavior: "smooth" });
     });
   });
 
