@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
   const catalog = Array.isArray(window.PEPCAN_CATALOG) ? window.PEPCAN_CATALOG : [];
   const byHandle = new Map();
   catalog.forEach((item) => {
