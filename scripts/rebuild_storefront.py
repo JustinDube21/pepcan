@@ -363,6 +363,12 @@ def money(value: float) -> str:
     return f"${value:,.2f}"
 
 
+def product_price_display(product: dict) -> str:
+    if product.get("kit") and product.get("kit_price"):
+        return f'<span>{money(product["price"])}</span><span class="price-separator">-</span><span>{money(product["kit_price"])} kit</span>'
+    return f'<span>{money(product["price"])}</span>'
+
+
 def read_docx_paragraphs() -> list[str]:
     if not DOCX_PATH.exists():
         return []
@@ -556,7 +562,7 @@ def header(active: str) -> str:
                 for p in [PRODUCT_BY_HANDLE["bacteriostatic-water-10ml"], PRODUCT_BY_HANDLE["bpc-157"], PRODUCT_BY_HANDLE["cjc-1295-10-mg"]]
             )
             nav.append(
-                f'<div class="nav-dropdown" data-shop-menu><a class="nav-shop-trigger {cls}" href="/products" aria-expanded="false" data-shop-trigger>{label}<span>v</span></a><div class="nav-menu mega-menu"><div class="mega-head"><div><strong>Shop by category</strong><p>Find products based on your research goals and peptide category.</p></div><a href="/products">View full catalog</a></div><div class="mega-category-grid">{category_tiles}</div><div class="mega-products"><div class="mega-products-head"><h3>Featured Products</h3><a href="/products">Browse all</a></div><div class="mega-product-grid">{featured_tiles}</div></div><a class="mega-cta" href="/products">View full catalog -></a></div></div>'
+                f'<div class="nav-dropdown" data-shop-menu><a class="nav-shop-trigger {cls}" href="/products" aria-expanded="false" data-shop-trigger>{label}<span class="nav-chevron" aria-hidden="true"></span></a><div class="nav-menu mega-menu"><div class="mega-head"><div><strong>Shop by category</strong><p>Find products based on your research goals and peptide category.</p></div><a href="/products">View full catalog</a></div><div class="mega-category-grid">{category_tiles}</div><div class="mega-products"><div class="mega-products-head"><h3>Featured Products</h3><a href="/products">Browse all</a></div><div class="mega-product-grid">{featured_tiles}</div></div><a class="mega-cta" href="/products">View full catalog -></a></div></div>'
             )
         else:
             nav.append(f'<a class="{cls}" href="{href}">{label}</a>')
@@ -567,7 +573,14 @@ def header(active: str) -> str:
     <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" data-menu-toggle><span></span><span></span><span></span></button>
     <nav class="primary-nav" data-nav>{"".join(nav)}</nav>
     <div class="header-actions">
-      <button class="icon-btn" type="button" aria-label="Search products" data-search-open>{icon("search")}</button>
+      <form class="header-search" data-header-search-form role="search">
+        <input type="search" name="q" placeholder="Search products..." autocomplete="off" aria-label="Search products" data-site-search>
+        <button class="header-search-submit" type="submit" aria-label="Search catalog">{icon("search")}</button>
+        <div class="header-search-popover" data-header-search-popover>
+          <div class="popular-searches" data-popular-searches><div><strong>Popular Searches</strong><span>High-demand research products</span></div><div><button type="button" data-popular-search="Retatrutide">Retatrutide</button><button type="button" data-popular-search="GHK-Cu">GHK-Cu</button><button type="button" data-popular-search="Tesamorelin">Tesamorelin</button><button type="button" data-popular-search="BPC-157">BPC-157</button><button type="button" data-popular-search="CJC-1295">CJC-1295</button><button type="button" data-popular-search="Tirzepatide">Tirzepatide</button></div></div>
+          <div class="search-results" data-site-search-results></div>
+        </div>
+      </form>
       <a class="icon-btn" href="/account" aria-label="Account dashboard">{icon("user")}</a>
       <button class="icon-btn cart-icon" type="button" aria-label="Open cart" data-cart-open>{icon("cart")}<span class="cart-count" data-cart-count>0</span></button>
     </div>
@@ -599,7 +612,7 @@ def product_card(product: dict) -> str:
     return f"""
     <article class="product-card" data-product-card data-title="{esc(product["title"].lower())}" data-category="{esc(product["collection"])}" data-price="{product["price"]:.2f}" data-sort="{product["sort"]}" data-featured="{"true" if product["sort"] <= 4 else "false"}">
       <a class="product-media" href="/products/{product["handle"]}"><img src="/assets/products/{product["image"]}" alt="{esc(product["title"])} research product vial" width="700" height="700" loading="lazy" decoding="async"></a>
-      <div class="product-body"><span class="pill">{esc(collection["title"])}</span><h3><a href="/products/{product["handle"]}">{esc(product["title"])}</a></h3><p>{esc(product["summary"])}</p><div class="product-meta"><strong>{money(product["price"])}</strong><button class="card-order" type="button" data-add-to-cart data-handle="{esc(product["handle"])}">Add</button></div></div>
+      <div class="product-body"><span class="pill">{esc(collection["title"])}</span><h3><a href="/products/{product["handle"]}">{esc(product["title"])}</a></h3><p>{esc(product["summary"])}</p><div class="product-meta"><strong class="product-price-range">{product_price_display(product)}</strong><button class="card-order" type="button" data-add-to-cart data-handle="{esc(product["handle"])}">Add</button></div></div>
     </article>
 """
 
@@ -1297,10 +1310,10 @@ def render_contact_page() -> None:
           </ul>
         </section>
         <section class="contact-copy-card accent">
-          <span class="eyebrow">Support Requests</span>
-          <h2>Product documentation and order support</h2>
-          <p>Include your product name, order number, and any batch information available so our team can review your request faster.</p>
-          <a class="btn btn-primary" href="/contact#research-updates">Get Updates</a>
+          <span class="eyebrow">Support Information</span>
+          <h2>Product documentation support</h2>
+          <p>Use our lab testing page and product pages to review available documentation. Batch-specific COA information is shared when available.</p>
+          <a class="btn btn-primary" href="/lab-testing-coa">View Lab Testing</a>
         </section>
       </div>
 
@@ -1319,8 +1332,8 @@ def render_contact_page() -> None:
 
       <section class="contact-copy-card">
         <h2>Product Documentation Requests</h2>
-        <p>If you are contacting us about product documentation, please include the product name, order number if applicable, and any batch information available on your product label or order details.</p>
-        <p>This helps our team review your request faster and provide the most accurate information available.</p>
+        <p>For product documentation questions, use the product name and any batch information available on your product label.</p>
+        <p>This helps our team review the request faster and provide the most accurate information available.</p>
       </section>
 
       <section class="contact-copy-card important">

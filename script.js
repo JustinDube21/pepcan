@@ -9,6 +9,7 @@
   const cartKey = "pepcan_cart_v4";
   const threshold = 249.99;
   const money = (value) => `$${Number(value || 0).toFixed(2)}`;
+  const priceRange = (product) => (product && product.kit && product.kitPrice ? `${money(product.price)} - ${money(product.kitPrice)} kit` : money(product && product.price));
   const body = document.body;
 
   function readCart() {
@@ -267,6 +268,20 @@
   }
   document.querySelectorAll("[data-product-page]").forEach(updateProductPrice);
 
+  function enhanceProductCardPrices() {
+    document.querySelectorAll("[data-product-card]").forEach((card) => {
+      const handle = card.querySelector("[data-add-to-cart]")?.dataset.handle || card.querySelector(".product-media")?.getAttribute("href")?.split("/products/").pop()?.replace(/\/$/, "");
+      const product = byHandle.get(handle);
+      const priceTarget = card.querySelector(".product-meta strong");
+      if (!product || !priceTarget) return;
+      priceTarget.classList.add("product-price-range");
+      priceTarget.innerHTML = product.kit && product.kitPrice
+        ? `<span>${money(product.price)}</span><span class="price-separator">-</span><span>${money(product.kitPrice)} kit</span>`
+        : `<span>${money(product.price)}</span>`;
+    });
+  }
+  enhanceProductCardPrices();
+
   const searchInput = document.querySelector("[data-product-search]");
   const cards = Array.from(document.querySelectorAll("[data-product-card]"));
   const empty = document.querySelector("[data-empty-products]");
@@ -349,17 +364,57 @@
     });
   });
   document.querySelectorAll("[data-search-close]").forEach((button) => button.addEventListener("click", () => body.classList.remove("search-open")));
+  const headerSearch = document.querySelector("[data-header-search-form]");
   const siteSearch = document.querySelector("[data-site-search]");
-  if (siteSearch) siteSearch.addEventListener("input", () => renderSearchResults(siteSearch.value));
+  if (siteSearch) {
+    siteSearch.addEventListener("focus", () => {
+      if (headerSearch) headerSearch.classList.add("is-open");
+      renderSearchResults(siteSearch.value);
+    });
+    siteSearch.addEventListener("input", () => {
+      if (headerSearch) {
+        headerSearch.classList.add("is-open");
+        headerSearch.classList.toggle("has-query", Boolean(siteSearch.value.trim()));
+      }
+      renderSearchResults(siteSearch.value);
+    });
+  }
+  if (headerSearch) {
+    headerSearch.addEventListener("submit", (event) => {
+      event.preventDefault();
+      headerSearch.classList.add("is-open");
+      const firstResult = headerSearch.querySelector(".search-result");
+      if (firstResult && siteSearch && siteSearch.value.trim()) window.location.href = firstResult.href;
+    });
+    headerSearch.querySelectorAll("[data-popular-search]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (!siteSearch) return;
+        siteSearch.value = button.dataset.popularSearch || "";
+        headerSearch.classList.add("is-open", "has-query");
+        renderSearchResults(siteSearch.value);
+        siteSearch.focus();
+      });
+    });
+    document.addEventListener("click", (event) => {
+      if (!headerSearch.contains(event.target)) headerSearch.classList.remove("is-open");
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") headerSearch.classList.remove("is-open");
+    });
+  }
 
   function renderSearchResults(term) {
     const wrap = document.querySelector("[data-site-search-results]");
     if (!wrap) return;
     const value = (term || "").trim().toLowerCase();
-    const results = catalog.filter((product) => !value || product.title.toLowerCase().includes(value) || product.categoryTitle.toLowerCase().includes(value)).slice(0, 8);
+    if (!value) {
+      wrap.innerHTML = "";
+      return;
+    }
+    const results = catalog.filter((product) => product.title.toLowerCase().includes(value) || product.categoryTitle.toLowerCase().includes(value)).slice(0, 8);
     wrap.innerHTML =
       results
-        .map((product) => `<a class="search-result" href="${product.url}"><img src="${product.image}" alt="${product.title} product image" width="58" height="58"><span><strong>${product.title}</strong><span>${product.categoryTitle} - ${money(product.price)}</span></span></a>`)
+        .map((product) => `<a class="search-result" href="${product.url}"><img src="${product.image}" alt="${product.title} product image" width="58" height="58"><span><strong>${product.title}</strong><span>${product.categoryTitle} - ${priceRange(product)}</span></span></a>`)
         .join("") || '<p class="cart-empty">No products found.</p>';
   }
 
