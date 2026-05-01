@@ -3259,6 +3259,121 @@ body.cart-open .cart-drawer {
   grid-template-columns: 1fr auto;
 }
 
+.account-shell {
+  min-height: calc(100vh - 230px);
+  padding: clamp(2.5rem, 7vw, 5rem) 0;
+}
+
+.account-nav {
+  justify-content: center;
+}
+
+.account-card,
+.account-dashboard {
+  max-width: 980px;
+}
+
+.auth-card {
+  max-width: 620px;
+}
+
+.account-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.4rem;
+}
+
+.account-form label,
+.account-form span {
+  display: block;
+}
+
+.account-form label > span {
+  margin-bottom: 0.4rem;
+  color: var(--pc-muted);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.account-form input {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 1rem;
+  border: 1px solid var(--pc-line);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+  color: #fff;
+  font: inherit;
+}
+
+.account-switch {
+  margin-top: 1.2rem;
+  color: var(--pc-muted);
+}
+
+.account-switch a,
+.account-panel dd {
+  color: #fff;
+}
+
+.form-message.error {
+  color: #ff5d5d;
+}
+
+.form-message.success {
+  color: var(--pc-green);
+}
+
+.account-dashboard-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.account-panel {
+  padding: 1.2rem;
+  border: 1px solid var(--pc-line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.account-panel-wide {
+  grid-column: 1 / -1;
+}
+
+.account-panel dl {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0 0;
+}
+
+.account-panel dt {
+  color: var(--pc-muted);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.account-panel dd {
+  margin: 0.25rem 0 0;
+  overflow-wrap: anywhere;
+}
+
+.account-footer {
+  padding: 1.5rem clamp(1rem, 4vw, 3rem);
+}
+
 @media (max-width: 1100px) {
   .mega-menu {
     position: static;
@@ -3297,6 +3412,15 @@ body.cart-open .cart-drawer {
 
   .footer-bottom {
     align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .account-dashboard-head,
+  .account-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-dashboard-head {
     flex-direction: column;
   }
 }

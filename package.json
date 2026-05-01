@@ -1,11 +1,24 @@
 {
   "scripts": {
-    "build": "node build-static-github-pages-site.js",
-    "check": "node --check script.js && node --check lib/catalog.js && node --check lib/utils.js && node --check api/create-checkout-session.js && node --check api/stripe-webhook.js && node --check api/subscribe.js && node --check api/admin/orders.js && node --check api/admin/subscribers.js && node --check build-static-github-pages-site.js"
+    "dev": "node scripts/prepare-next-public.js && next dev",
+    "prebuild": "node scripts/prepare-next-public.js",
+    "build": "next build",
+    "start": "next start",
+    "build:static": "node build-static-github-pages-site.js",
+    "check": "node --check script.js && node --check lib/catalog.js && node --check lib/utils.js && node --check api/create-checkout-session.js && node --check api/stripe-webhook.js && node --check api/subscribe.js && node --check api/admin/orders.js && node --check api/admin/subscribers.js && node --check build-static-github-pages-site.js && node --check scripts/prepare-next-public.js && npm run build"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.105.1",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
     "stripe": "^22.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
   }
 }
