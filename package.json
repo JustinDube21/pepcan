@@ -4,7 +4,8 @@
     "check": "node --check script.js && node --check lib/catalog.js && node --check lib/utils.js && node --check api/create-checkout-session.js && node --check api/stripe-webhook.js && node --check api/subscribe.js && node --check api/admin/orders.js && node --check api/admin/subscribers.js && node --check build-static-github-pages-site.js"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.105.1",
     "stripe": "^22.1.0"
-  },
-  "devDependencies": {}
+  }
 }
