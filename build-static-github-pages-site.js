@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const workspace = __dirname;
-const sourceSite = path.join(workspace, "github-pages-static-site");
+const sourceAssets = path.join(workspace, "assets");
 const output = path.join(workspace, "github-pages-static-site-complete");
 const downloadsZip = path.join(process.env.USERPROFILE || "C:\\Users\\figng", "Downloads", "github-pages-static-site-complete.zip");
 
@@ -21,7 +21,7 @@ if (fs.existsSync(output)) {
 }
 
 fs.mkdirSync(output, { recursive: true });
-fs.cpSync(path.join(sourceSite, "assets"), path.join(output, "assets"), { recursive: true });
+fs.cpSync(sourceAssets, path.join(output, "assets"), { recursive: true });
 fs.mkdirSync(path.join(output, "products"), { recursive: true });
 fs.mkdirSync(path.join(output, "collections"), { recursive: true });
 fs.mkdirSync(path.join(output, "pages"), { recursive: true });
@@ -580,7 +580,10 @@ function nav(prefix, active = "") {
         <span></span><span></span><span></span>
       </button>
       <nav class="primary-nav" data-nav>
-        ${links.map(([label, href, key]) => `<a class="${active === key ? "active" : ""}" href="${href}">${label}</a>`).join("")}
+        ${links.map(([label, href, key]) => {
+          const classes = [active === key ? "active" : "", key === "payment" ? "nav-cta" : ""].filter(Boolean).join(" ");
+          return `<a class="${classes}" href="${href}">${label}</a>`;
+        }).join("")}
       </nav>
     </header>
   `;
@@ -627,11 +630,15 @@ function layout({ title, description, body, prefix = "./", active = "", classNam
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)} | PeptidesCanada</title>
   <meta name="description" content="${esc(description)}">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="${esc(title)} | PeptidesCanada">
+  <meta property="og:description" content="${esc(description)}">
   <link rel="stylesheet" href="${prefix}style.css">
   <script src="${prefix}script.js" defer></script>
 </head>
 <body class="${className}">
-  <div class="topbar">Fast Canadian fulfillment for research-use-only products</div>
+  <div class="topbar">Canada-wide fulfillment | COA support | Research use only</div>
   ${nav(prefix, active)}
   <main>
     ${body}
@@ -654,7 +661,7 @@ function productCard(product, prefix) {
         <p>${esc(product.summary)}</p>
         <div class="product-meta">
           <strong>${esc(product.price)}</strong>
-          <a class="text-link" href="${prefix}payment.html?product=${encodeURIComponent(product.title)}">Order</a>
+          <a class="card-order" href="${prefix}payment.html?product=${encodeURIComponent(product.title)}">Order</a>
         </div>
       </div>
     </article>
@@ -662,11 +669,12 @@ function productCard(product, prefix) {
 }
 
 function collectionCard(collection, prefix) {
+  const count = products.filter((product) => collection.handle === "frontpage" || product.collection === collection.handle).length;
   return `
     <a class="collection-card" href="${collectionUrl(collection, prefix)}">
       <img src="${prefix}assets/collections/${collection.image}" alt="${esc(collection.title)} collection" width="600" height="600" loading="lazy">
       <div>
-        <span>${products.filter((product) => collection.handle === "frontpage" || product.collection === collection.handle).length} products</span>
+        <span>${count} ${count === 1 ? "product" : "products"}</span>
         <h3>${esc(collection.title)}</h3>
         <p>${esc(collection.description)}</p>
       </div>
@@ -694,7 +702,7 @@ function write(file, html) {
 }
 
 function homepage() {
-  const featuredHandles = ["tesamoralin-10mg", "retatrutide-10mg", "bpc-157", "bacteriostatic-water-10ml"];
+  const featuredHandles = ["bacteriostatic-water-10ml", "bpc-157", "cjc-1295-10-mg", "retatrutide-10mg"];
   const featured = featuredHandles.map((handle) => products.find((product) => product.handle === handle)).filter(Boolean);
   return layout({
     title: "Premium Research Peptides in Canada",
@@ -703,23 +711,40 @@ function homepage() {
     body: `
       <section class="hero">
         <div class="hero-copy">
-          <span class="eyebrow">Canadian research supply</span>
-          <h1>Premium Research Peptides in Canada</h1>
-          <p>Third-party tested. COA available. Fast domestic fulfillment. Built for research-use-only browsing with clear compliance and product documentation.</p>
+          <span class="eyebrow">Premium research supply</span>
+          <h1>Research peptides, simplified for Canadian labs.</h1>
+          <p>A clean catalog for research-use-only compounds, quality documentation, and clear manual ordering without medical or human-use claims.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="./products.html">Browse Products</a>
-            <a class="btn btn-secondary" href="./lab-testing-coa.html">View COA Standards</a>
+            <a class="btn btn-primary" href="./products.html">Shop Products</a>
+            <a class="btn btn-secondary" href="./lab-testing-coa.html">View Lab Standards</a>
+          </div>
+          <div class="hero-metrics">
+            <div><strong>99%+</strong><span>purity standard where listed</span></div>
+            <div><strong>CA</strong><span>domestic fulfillment focus</span></div>
+            <div><strong>RUO</strong><span>research-use-only positioning</span></div>
           </div>
         </div>
         <div class="hero-product">
-          <img src="./assets/products/tesamorelin-10mg.png" alt="Tesamoralin research product vial" width="700" height="700" loading="eager">
+          <img src="./assets/products/bacteriostatic-water-10ml.png" alt="Bacteriostatic Water 10ml research product vial" width="700" height="700" loading="eager" fetchpriority="high" decoding="async">
         </div>
       </section>
       ${trustBand()}
+      <section class="section spotlight-section">
+        <div class="spotlight-copy">
+          <span class="eyebrow">Product spotlight</span>
+          <h2>Start with the essentials.</h2>
+          <p>Featured products are presented with concise research context, visible pricing, and a direct order path so visitors can evaluate the catalog quickly.</p>
+          <div class="spotlight-list">
+            <div><strong>Clear pricing</strong><p>No buried product details or hidden order steps.</p></div>
+            <div><strong>Documentation-first</strong><p>Quality, storage, and COA language stays close to the call to action.</p></div>
+          </div>
+        </div>
+        ${productCard(products.find((product) => product.handle === "bpc-157") || featured[0], "./")}
+      </section>
       <section class="section">
         <div class="section-heading">
           <span class="eyebrow">Shop by category</span>
-          <h2>Browse research categories</h2>
+          <h2>Find the right research path.</h2>
           <a class="text-link" href="./collections/index.html">View all collections</a>
         </div>
         <div class="collection-grid">
@@ -729,21 +754,24 @@ function homepage() {
       <section class="section">
         <div class="section-heading">
           <span class="eyebrow">Featured products</span>
-          <h2>Selected research compounds</h2>
+          <h2>Popular catalog picks.</h2>
           <a class="text-link" href="./products.html">Browse full catalog</a>
         </div>
         <div class="product-grid">
           ${featured.map((product) => productCard(product, "./")).join("")}
         </div>
       </section>
-      <section class="confidence">
-        <span class="eyebrow">Final confidence check</span>
-        <h2>Why Researchers Choose Us</h2>
-        <div class="confidence-grid">
-          <div><strong>Verified standards</strong><p>Product pages emphasize purity, documentation, batch support, and responsible research wording.</p></div>
-          <div><strong>Canadian fulfillment</strong><p>A domestic browsing and order flow keeps the experience clear, direct, and professional.</p></div>
-          <div><strong>Trusted purchase experience</strong><p>Manual e-transfer instructions replace Shopify checkout with a transparent static-site process.</p></div>
-          <div><strong>Compliance-first content</strong><p>No medical, cosmetic, therapeutic, or human-use claims are used across the catalog.</p></div>
+      <section class="section quality-section">
+        <div>
+          <span class="eyebrow">Quality and support</span>
+          <h2>Built for confident browsing.</h2>
+          <p>The store keeps the purchase journey simple while preserving a research and educational tone across product pages, policies, and support content.</p>
+        </div>
+        <div class="quality-list">
+          <div><strong>COA support</strong><p>Quality documentation is prioritized wherever available.</p></div>
+          <div><strong>Fast path to order</strong><p>Product CTAs route directly to payment instructions with the product prefilled.</p></div>
+          <div><strong>Responsive layout</strong><p>Cards, menus, and product details are tuned for phone-first browsing.</p></div>
+          <div><strong>Compliance language</strong><p>Every page avoids therapeutic, cosmetic, and human-use claims.</p></div>
         </div>
       </section>
     `
@@ -758,8 +786,8 @@ function productsPage() {
     body: `
       <section class="page-hero">
         <span class="eyebrow">Research catalog</span>
-        <h1>Products</h1>
-        <p>Browse a static catalog of research-use-only products. Every order button redirects to the manual payment instructions page.</p>
+        <h1>Shop research products</h1>
+        <p>Browse research-use-only products by name or category. Each order link opens the manual payment page with the product prefilled.</p>
       </section>
       <section class="catalog-tools">
         <label>
@@ -777,6 +805,7 @@ function productsPage() {
       <section class="product-grid" data-product-grid>
         ${products.map((product) => productCard(product, "./")).join("")}
       </section>
+      <p class="empty-state" data-empty-products hidden>No products match those filters. Try a different search or category.</p>
     `
   });
 }
@@ -841,24 +870,37 @@ function productPage(product) {
           <a class="breadcrumb" href="../collections/${collection.handle}.html">${esc(collection.title)}</a>
           <h1>${esc(product.title)}</h1>
           <p class="lead">${esc(product.summary)}</p>
-          <p>${esc(product.details)}</p>
-          <div class="price-row"><strong>${esc(product.price)}</strong><span>Manual payment flow</span></div>
-          <div class="variant-box">
-            <h2>Available options</h2>
-            <div class="variant-grid">
-              <div><strong>Single vial</strong><p>Standard research vial option.</p></div>
-              <div><strong>Research kit</strong><p>Placeholder option. Confirm availability with support.</p></div>
+          <div class="purchase-panel">
+            <div class="price-row"><strong>${esc(product.price)}</strong><span>Manual payment instructions</span></div>
+            <div class="conversion-points">
+              <span>COA support</span>
+              <span>Ships from Canada</span>
+              <span>Research-use only</span>
             </div>
+            <a class="btn btn-primary btn-wide" href="../payment.html?product=${encodeURIComponent(product.title)}">Start Order</a>
+            <p class="microcopy">Opens payment instructions with ${esc(product.title)} prefilled for a faster order request.</p>
           </div>
-          <a class="btn btn-primary btn-wide" href="../payment.html?product=${encodeURIComponent(product.title)}">Order via Payment Instructions</a>
         </div>
       </section>
       <section class="section split-section">
         <div>
-          <h2>Product specifications</h2>
+          <span class="eyebrow">Research context</span>
+          <h2>For controlled laboratory workflows</h2>
+          <p>${esc(product.details)}</p>
+          <p>This information is provided for research and educational context only. Products are not for human consumption, clinical use, or cosmetic use.</p>
+        </div>
+        <div>
+          <span class="eyebrow">Quality profile</span>
+          <h2>Specifications</h2>
           <ul class="spec-list">
             ${product.specs.map((spec) => `<li>${esc(spec)}</li>`).join("")}
           </ul>
+        </div>
+      </section>
+      <section class="section split-section">
+        <div>
+          <h2>Ordering support</h2>
+          <p>Use the order button above to open the manual payment page with this product selected. Include quantity, shipping details, and any documentation questions in your order request.</p>
         </div>
         <div>
           <h2>Research-use disclaimer</h2>
@@ -924,14 +966,14 @@ function css() {
   --bg: #030407;
   --panel: #0c0f14;
   --panel-2: #141820;
-  --line: rgba(255, 255, 255, 0.1);
+  --line: rgba(255, 255, 255, 0.12);
   --text: #f6f7f9;
   --muted: #a8acb4;
   --soft: #d5d7dc;
   --red: #e00000;
   --red-dark: #9b0000;
   --green: #00d36a;
-  --shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+  --shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
   --radius: 8px;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -941,15 +983,17 @@ html { scroll-behavior: smooth; }
 body {
   margin: 0;
   color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(148, 0, 0, 0.24), transparent 34rem),
-    radial-gradient(circle at top right, rgba(20, 55, 90, 0.24), transparent 34rem),
-    var(--bg);
+  background: linear-gradient(180deg, #07080a 0%, var(--bg) 38rem);
   min-height: 100vh;
 }
 body.menu-open { overflow: hidden; }
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
+h1,
+h2,
+h3 {
+  overflow-wrap: anywhere;
+}
 
 .topbar {
   background: #090a0f;
@@ -966,7 +1010,7 @@ img { max-width: 100%; display: block; }
   position: sticky;
   top: 0;
   z-index: 50;
-  min-height: 74px;
+  min-height: 70px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -977,7 +1021,7 @@ img { max-width: 100%; display: block; }
   border-bottom: 1px solid var(--line);
 }
 
-.brand img { width: 190px; height: auto; }
+.brand img { width: 176px; height: auto; }
 .primary-nav { display: flex; align-items: center; gap: 1.55rem; }
 .primary-nav a {
   color: var(--soft);
@@ -990,6 +1034,21 @@ img { max-width: 100%; display: block; }
 }
 .primary-nav a:hover,
 .primary-nav a.active { color: var(--text); border-color: var(--red); }
+.primary-nav a.nav-cta {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--red);
+  border-radius: 6px;
+  padding: 0.65rem 0.95rem;
+  color: white;
+  background: rgba(224, 0, 0, 0.16);
+}
+.primary-nav a.nav-cta:hover,
+.primary-nav a.nav-cta.active {
+  background: var(--red);
+  border-color: var(--red);
+}
 .menu-toggle { display: none; }
 
 main { overflow: hidden; }
@@ -1018,7 +1077,7 @@ main { overflow: hidden; }
 .page-hero h1,
 .collection-hero h1 {
   margin: 0;
-  font-size: clamp(3rem, 7vw, 6.6rem);
+  font-size: 5.4rem;
   line-height: 0.92;
   letter-spacing: 0;
 }
@@ -1027,13 +1086,36 @@ main { overflow: hidden; }
 .collection-hero p,
 .lead {
   color: var(--muted);
-  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-size: 1.12rem;
   line-height: 1.65;
   max-width: 720px;
 }
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+.hero-metrics div {
+  padding-left: 0.9rem;
+  border-left: 1px solid var(--line);
+}
+.hero-metrics strong {
+  display: block;
+  color: white;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+.hero-metrics span {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
 .hero-product {
   border-radius: var(--radius);
-  background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+  background: var(--panel);
   border: 1px solid var(--line);
   padding: clamp(1rem, 2vw, 2rem);
   box-shadow: var(--shadow);
@@ -1104,7 +1186,7 @@ main { overflow: hidden; }
 .support-card,
 .notice-box,
 .payment-steps > div {
-  background: linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025));
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
@@ -1128,7 +1210,7 @@ main { overflow: hidden; }
 .confidence h2,
 .content-page h1 {
   margin: 0;
-  font-size: clamp(2rem, 5vw, 4.2rem);
+  font-size: 3.4rem;
   line-height: 1;
 }
 .collection-grid,
@@ -1178,18 +1260,26 @@ details p {
 .product-media {
   display: block;
   margin: 1rem 1rem 0;
+  aspect-ratio: 1 / 1;
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: rgba(255,255,255,0.035);
+  background: #f7f8fa;
   overflow: hidden;
 }
 .product-media img {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: 100%;
   object-fit: cover;
 }
 .product-body { padding: 1rem; display: flex; flex-direction: column; flex: 1; }
 .product-body p { flex: 1; }
+.product-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+.product-card {
+  transition: transform 160ms ease, border-color 160ms ease;
+}
 .pill {
   width: fit-content;
   display: inline-flex;
@@ -1211,6 +1301,22 @@ details p {
   gap: 1rem;
   margin-top: 1rem;
 }
+.card-order {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 0.65rem 0.9rem;
+  color: white;
+  background: var(--red);
+  border: 1px solid var(--red);
+  font-weight: 900;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.card-order:hover { background: #f00000; }
 .product-meta strong,
 .price-row strong { font-size: 1.5rem; }
 
@@ -1226,6 +1332,55 @@ details p {
   text-align: left;
 }
 .confidence-grid div { padding: 1.5rem; }
+.spotlight-section,
+.quality-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 2rem;
+  align-items: center;
+}
+.spotlight-copy p,
+.quality-section p {
+  color: var(--muted);
+  line-height: 1.65;
+}
+.spotlight-copy h2,
+.quality-section h2 {
+  margin: 0;
+  font-size: 3.4rem;
+  line-height: 1;
+}
+.spotlight-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+.spotlight-list div {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+.spotlight-list strong {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+.quality-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.quality-list div {
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+.quality-list strong {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+}
 
 .page-hero {
   padding: clamp(4rem, 8vw, 7rem) 0 3rem;
@@ -1256,6 +1411,16 @@ select {
   padding: 0.85rem 1rem;
   font: inherit;
 }
+.empty-state {
+  width: min(1200px, calc(100% - 2rem));
+  margin: 1rem auto 4rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  background: var(--panel);
+  text-align: center;
+}
 
 .collection-hero,
 .product-detail {
@@ -1271,16 +1436,17 @@ select {
 }
 .product-detail {
   grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
 }
 .detail-media {
   padding: 1rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025));
+  background: var(--panel);
 }
 .detail-copy h1 {
   margin: 0 0 1rem;
-  font-size: clamp(2.8rem, 6vw, 5.5rem);
+  font-size: 4.35rem;
   line-height: 0.95;
 }
 .breadcrumb {
@@ -1299,6 +1465,44 @@ select {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   color: var(--muted);
+}
+.purchase-panel {
+  margin-top: 1.2rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: var(--radius);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+.purchase-panel .price-row {
+  padding-top: 0;
+  border-top: 0;
+}
+.conversion-points {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.conversion-points span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border: 1px solid rgba(0, 211, 106, 0.24);
+  border-radius: 6px;
+  padding: 0.55rem 0.65rem;
+  color: var(--soft);
+  background: rgba(0, 211, 106, 0.08);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-align: center;
+}
+.microcopy {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 .variant-box { margin-top: 1.2rem; padding: 1rem; }
 .variant-box h2 { margin-top: 0; }
@@ -1325,11 +1529,11 @@ select {
   max-width: 950px;
   margin-inline: auto;
   padding: clamp(1.2rem, 4vw, 3rem);
-  background: linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025));
+  background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
 }
-.copy-panel h2 { margin-top: 0; font-size: clamp(1.9rem, 4vw, 3rem); }
+.copy-panel h2 { margin-top: 0; font-size: 2.6rem; }
 .copy-panel h3 { margin-top: 2rem; font-size: 1.35rem; }
 .copy-panel a { color: white; border-bottom: 1px solid rgba(224,0,0,0.75); }
 .copy-panel a:hover { color: var(--red); }
@@ -1340,7 +1544,7 @@ select {
   margin-bottom: clamp(4rem, 8vw, 7rem);
   padding: clamp(1.2rem, 4vw, 3rem);
 }
-.content-page h2 { margin-top: 2rem; font-size: clamp(1.4rem, 3vw, 2rem); }
+.content-page h2 { margin-top: 2rem; font-size: 1.8rem; }
 .content-page ul { padding-left: 1.25rem; }
 .support-card,
 .notice-box { padding: 1.2rem; }
@@ -1392,6 +1596,10 @@ summary {
 }
 
 @media (max-width: 980px) {
+  .site-header {
+    min-height: 68px;
+    position: sticky;
+  }
   .menu-toggle {
     display: inline-flex;
     flex-direction: column;
@@ -1404,6 +1612,7 @@ summary {
     background: rgba(255,255,255,0.04);
     position: relative;
     z-index: 70;
+    cursor: pointer;
   }
   .menu-toggle span {
     display: block;
@@ -1411,30 +1620,65 @@ summary {
     height: 2px;
     margin-inline: auto;
     background: white;
+    transition: transform 160ms ease, opacity 160ms ease;
   }
+  body.menu-open .menu-toggle span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  body.menu-open .menu-toggle span:nth-child(2) { opacity: 0; }
+  body.menu-open .menu-toggle span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
   .primary-nav {
-    position: fixed;
-    inset: 74px 0 auto 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     z-index: 60;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 0;
+    gap: 0.35rem;
     padding: 1rem;
     background: rgba(0,0,0,0.96);
     border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    max-height: calc(100vh - 68px);
+    overflow-y: auto;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    visibility: hidden;
+    transition: opacity 160ms ease, transform 160ms ease, visibility 160ms ease;
   }
-  .primary-nav.is-open { display: flex; }
+  .primary-nav.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+  }
   .primary-nav a {
-    min-height: 54px;
+    min-height: 50px;
     display: flex;
     align-items: center;
+    padding: 0.65rem 0.2rem;
     border-bottom: 1px solid var(--line);
   }
+  .primary-nav a.nav-cta {
+    justify-content: center;
+    margin-top: 0.35rem;
+  }
+  .hero h1,
+  .page-hero h1,
+  .collection-hero h1 { font-size: 3.65rem; }
+  .detail-copy h1 { font-size: 3.25rem; }
+  .section-heading h2,
+  .confidence h2,
+  .content-page h1,
+  .spotlight-copy h2,
+  .quality-section h2 { font-size: 2.65rem; }
   .hero,
   .collection-hero,
   .product-detail,
-  .split-section {
+  .split-section,
+  .spotlight-section,
+  .quality-section {
     grid-template-columns: 1fr;
   }
   .trust-band,
@@ -1448,11 +1692,15 @@ summary {
   }
   .catalog-tools { grid-template-columns: 1fr; }
   .hero { min-height: auto; }
+  .detail-media {
+    max-width: 520px;
+    margin-inline: auto;
+  }
 }
 
 @media (max-width: 620px) {
   .topbar { font-size: 0.68rem; }
-  .brand img { width: 160px; }
+  .brand img { width: 148px; }
   .site-header { padding-inline: 1rem; }
   .hero,
   .section,
@@ -1460,24 +1708,49 @@ summary {
   .collection-hero,
   .product-detail,
   .confidence { width: min(100% - 1.25rem, 1200px); }
+  .hero,
+  .page-hero,
+  .collection-hero,
+  .product-detail { padding-top: 2rem; }
   .hero h1,
   .page-hero h1,
   .collection-hero h1,
-  .detail-copy h1 { font-size: clamp(2.45rem, 14vw, 4rem); }
+  .detail-copy h1 { font-size: 2.5rem; line-height: 1; }
   .trust-band,
   .confidence-grid,
   .collection-grid,
   .product-grid,
   .small-grid,
+  .hero-metrics,
+  .quality-list,
   .payment-steps,
   .variant-grid,
   .contact-panel,
   .site-footer {
     grid-template-columns: 1fr;
   }
-  .collection-card { grid-template-columns: 96px 1fr; }
-  .section-heading { align-items: flex-start; }
+  .hero-actions,
+  .section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .hero-actions .btn,
+  .section-heading .text-link {
+    width: 100%;
+  }
+  .collection-card { grid-template-columns: 88px 1fr; min-height: 140px; }
+  .section-heading { align-items: stretch; }
   .price-row { align-items: flex-start; flex-direction: column; }
+  .detail-copy { order: -1; }
+  .product-detail { gap: 1.25rem; }
+  .purchase-panel { padding: 0.9rem; }
+  .conversion-points { grid-template-columns: 1fr; }
+  .product-meta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .card-order { width: 100%; }
+  .copy-panel h2 { font-size: 2rem; }
 }
 `;
 }
@@ -1486,19 +1759,31 @@ function js() {
   return `(() => {
   const toggle = document.querySelector("[data-menu-toggle]");
   const nav = document.querySelector("[data-nav]");
+  const desktopNav = window.matchMedia("(min-width: 981px)");
 
   function closeMenu() {
     if (!toggle || !nav) return;
     nav.classList.remove("is-open");
     document.body.classList.remove("menu-open");
     toggle.setAttribute("aria-expanded", "false");
+    toggle.setAttribute("aria-label", "Open navigation");
+  }
+
+  function setMenuState(isOpen) {
+    if (!toggle || !nav) return;
+    nav.classList.toggle("is-open", isOpen);
+    document.body.classList.toggle("menu-open", isOpen);
+    toggle.setAttribute("aria-expanded", String(isOpen));
+    toggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
   }
 
   if (toggle && nav) {
     toggle.addEventListener("click", () => {
-      const isOpen = nav.classList.toggle("is-open");
-      document.body.classList.toggle("menu-open", isOpen);
-      toggle.setAttribute("aria-expanded", String(isOpen));
+      setMenuState(!nav.classList.contains("is-open"));
+    });
+
+    nav.addEventListener("click", (event) => {
+      if (event.target.closest("a")) closeMenu();
     });
 
     document.addEventListener("keydown", (event) => {
@@ -1510,21 +1795,31 @@ function js() {
       if (nav.contains(event.target) || toggle.contains(event.target)) return;
       closeMenu();
     });
+
+    desktopNav.addEventListener("change", (event) => {
+      if (event.matches) closeMenu();
+    });
   }
 
   const search = document.querySelector("[data-product-search]");
   const category = document.querySelector("[data-category-filter]");
   const cards = Array.from(document.querySelectorAll("[data-product-card]"));
+  const emptyState = document.querySelector("[data-empty-products]");
 
   function filterCards() {
     const term = search ? search.value.trim().toLowerCase() : "";
     const selected = category ? category.value : "all";
+    let visibleCount = 0;
 
     cards.forEach((card) => {
       const matchesTerm = !term || card.dataset.title.includes(term);
       const matchesCategory = selected === "all" || card.dataset.category === selected;
-      card.hidden = !(matchesTerm && matchesCategory);
+      const isVisible = matchesTerm && matchesCategory;
+      card.hidden = !isVisible;
+      if (isVisible) visibleCount += 1;
     });
+
+    if (emptyState) emptyState.hidden = visibleCount > 0;
   }
 
   if (search) search.addEventListener("input", filterCards);
