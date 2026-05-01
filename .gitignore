@@ -1,0 +1,5 @@
+node_modules/
+github-pages-static-site-complete/
+.vercel/
+__pycache__/
+*.pyc

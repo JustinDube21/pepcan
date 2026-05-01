@@ -9,5 +9,21 @@
 </head>
 <body>
   <p>Redirecting to <a href="../../shipping">../../shipping</a>.</p>
+
+  <div class="search-backdrop" data-search-close></div>
+  <section class="search-panel" data-search-panel aria-label="Product search">
+    <div class="search-panel-head"><strong>Search catalog</strong><button type="button" aria-label="Close search" data-search-close>x</button></div>
+    <input type="search" placeholder="Search research compounds" data-site-search>
+    <div class="search-results" data-site-search-results></div>
+  </section>
+  <div class="cart-backdrop" data-cart-close></div>
+  <aside class="cart-drawer" data-cart-drawer aria-label="Shopping cart">
+    <div class="cart-head"><div><span class="eyebrow">Secure cart</span><h2>Your Cart (<span data-cart-title-count>0</span>)</h2></div><button type="button" aria-label="Close cart" data-cart-close>x</button></div>
+    <section class="shipping-card"><h3>Complimentary Priority Shipping</h3><p>Unlocked automatically on orders of $249.99+ CAD.</p><p data-shipping-copy>Only $249.99 left for complimentary priority shipping.</p><div class="progress"><span data-shipping-progress></span></div></section>
+    <div class="cart-items" data-cart-items></div>
+    <section class="cart-recs"><div><h3>Frequently Bought Together</h3><p>Relevant research pairings</p></div><div data-cart-recommendations></div></section>
+    <div class="cart-footer"><p class="cart-error" data-cart-error></p><div class="subtotal"><span>Subtotal</span><strong data-cart-subtotal>$0.00 CAD</strong></div><button class="btn btn-primary btn-wide" type="button" data-stripe-checkout>Proceed to Secure Checkout -></button><a class="btn btn-secondary btn-wide" href="/products">View Full Catalog</a></div>
+  </aside>
+
 </body>
 </html>
