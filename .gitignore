@@ -1,5 +1,8 @@
 node_modules/
 github-pages-static-site-complete/
+.next/
+public/
 .vercel/
 __pycache__/
 *.pyc
+*.tsbuildinfo
