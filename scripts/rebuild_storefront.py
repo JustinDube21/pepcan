@@ -899,6 +899,383 @@ def render_lab_testing_page() -> None:
     write("lab-testing-coa.html", render_document("Lab Testing & COA | PeptidesCanada", "Learn how PeptidesCanada approaches third-party lab testing, COA documentation, purity verification, and batch-level transparency.", "/lab-testing-coa", "lab", body, extra_ld=[breadcrumb([("Home", "/"), ("Lab Testing & COA", "/lab-testing-coa")])]))
 
 
+def render_content_pages() -> None:
+    pages = {
+        "faq.html": {
+            "title": "FAQ | PeptidesCanada",
+            "desc": "Frequently asked questions about PeptidesCanada research-use-only products, quality testing, shipping, payment, and compliance.",
+            "canonical": "/faq",
+            "active": "faq",
+            "crumb": "Frequently Asked Questions",
+            "body": """
+    <section class="content-page faq-page">
+      <span class="eyebrow">Research support</span>
+      <h1>Frequently Asked Questions (FAQ)</h1>
+
+      <h2>General Information</h2>
+      <div class="faq-list">
+        <details open><summary>What are your products intended for?</summary><p>All products sold by PeptidesCanada are intended strictly for research and laboratory use only.</p></details>
+        <details><summary>Are your products safe for human consumption?</summary><p>No. Our products are not for human consumption and are not intended to diagnose, treat, cure, or prevent any disease.</p></details>
+        <details><summary>What are research peptides?</summary><p>Research peptides are short chains of amino acids commonly studied in laboratory environments for scientific and educational purposes. They are frequently used in biochemical and analytical research settings.</p></details>
+        <details><summary>Why do researchers use peptides?</summary><p>Peptides are commonly researched for their potential biological interactions, stability, and structure-function relationships across multiple research fields including recovery, skin science, metabolism, and performance studies.</p></details>
+      </div>
+
+      <h2>Quality &amp; Testing</h2>
+      <div class="faq-list">
+        <details><summary>What is the purity of your peptides?</summary><p>Our products are manufactured and tested to meet a purity standard of 99% or higher where listed.</p></details>
+        <details><summary>Are your products tested?</summary><p>Yes. All products are handled under strict quality control procedures to ensure consistency, reliability, and research-grade standards.</p></details>
+        <details><summary>Do you provide batch verification or COA information?</summary><p>Many researchers look for product transparency such as batch verification and Certificate of Analysis (COA) availability. Product-specific documentation may vary depending on the compound.</p></details>
+        <details><summary>How should peptides be stored?</summary><p>Most lyophilized peptides should be stored in a cool, dry environment away from direct light. Reconstituted products are commonly stored under refrigerated conditions depending on research protocols.</p></details>
+      </div>
+
+      <h2>Shipping &amp; Orders</h2>
+      <div class="faq-list">
+        <details><summary>Where do you ship?</summary><p>We offer shipping internationally. Orders shipped within Canada typically arrive faster due to domestic processing.</p></details>
+        <details><summary>How long does shipping take?</summary><p>Orders are processed quickly. Delivery times vary by location, with faster shipping available within Canada.</p></details>
+        <details><summary>Do you offer discreet shipping?</summary><p>Yes. Orders are packaged securely and discreetly to protect customer privacy and ensure safe delivery.</p></details>
+        <details><summary>Do you offer tracking?</summary><p>Yes. Tracking information is provided once your order has been shipped.</p></details>
+      </div>
+
+      <h2>Payments</h2>
+      <div class="faq-list">
+        <details><summary>What payment methods do you accept?</summary><p>We accept major credit cards.</p></details>
+      </div>
+
+      <h2>Research Questions</h2>
+      <div class="faq-list">
+        <details><summary>What is GHK-Cu commonly researched for?</summary><p>GHK-Cu is commonly studied for skin quality, collagen support, hair research, and anti-aging related biochemical pathways.</p></details>
+        <details><summary>What is BPC-157 commonly researched for?</summary><p>BPC-157 is frequently discussed in research related to recovery, tissue response, and biological repair mechanisms in controlled laboratory settings.</p></details>
+        <details><summary>What is Tesamorelin commonly researched for?</summary><p>Tesamorelin is often researched in studies related to growth hormone pathways, body composition, and metabolic response.</p></details>
+        <details><summary>How long before noticeable results are commonly discussed?</summary><p>Research timelines vary depending on the compound and objective. Many discussions reference several weeks of consistent observation depending on study design.</p></details>
+        <details><summary>What dosage is commonly researched?</summary><p>Dosage discussions vary significantly depending on the peptide, format, and research objective. There is no universal protocol, and researchers typically follow compound-specific reference studies.</p></details>
+      </div>
+
+      <h2>Responsibility &amp; Compliance</h2>
+      <div class="faq-list">
+        <details><summary>Who can purchase your products?</summary><p>By purchasing from our store, you confirm that you are authorized to use these materials for legitimate research purposes.</p></details>
+        <details><summary>Do I need to comply with local laws?</summary><p>Yes. Customers are responsible for ensuring compliance with all applicable laws and regulations in their jurisdiction.</p></details>
+        <details><summary>Why choose PeptidesCanada?</summary><p>Researchers choose PeptidesCanada for precision, purity, product consistency, secure shipping, and a strong focus on research-grade quality standards.</p></details>
+      </div>
+
+      <p class="closing-line">Precision. Purity. Performance.</p>
+    </section>
+""",
+        },
+        "disclaimer.html": {
+            "title": "Disclaimer | PeptidesCanada",
+            "desc": "Disclaimer for PeptidesCanada research-use-only products, website information, customer responsibility, and compliance notices.",
+            "canonical": "/disclaimer",
+            "active": "",
+            "crumb": "Disclaimer",
+            "body": """
+    <section class="content-page legal-page">
+      <span class="eyebrow">Research-use-only notice</span>
+      <h1>Disclaimer</h1>
+      <p>The information provided on the PeptidesCanada website is for general informational, educational, and research-related purposes only.</p>
+      <p>By using this website, purchasing from PeptidesCanada, or reviewing any product information, you acknowledge and agree to the terms outlined in this disclaimer.</p>
+
+      <h2>No Medical Advice</h2>
+      <p>The content on this website is not medical advice and should not be relied upon as such.</p>
+      <p>Nothing on this website is intended to diagnose, treat, cure, prevent, or manage any disease, medical condition, or health-related outcome.</p>
+      <p>PeptidesCanada does not provide medical advice, dosage guidance, human-use instructions, treatment recommendations, or veterinary advice.</p>
+
+      <h2>Research Use Only</h2>
+      <p>All products sold by PeptidesCanada are intended strictly for research and laboratory use only.</p>
+      <p>Products are not for human consumption and are not intended for use in humans or animals.</p>
+      <p>Product names, descriptions, educational content, blog articles, and supporting documentation are provided only for research context and product identification purposes.</p>
+
+      <h2>Customer Responsibility</h2>
+      <p>Customers are responsible for ensuring that any purchase, possession, handling, storage, and use of products from PeptidesCanada complies with all applicable laws, regulations, and institutional requirements in their jurisdiction.</p>
+      <p>By purchasing from PeptidesCanada, you confirm that you are authorized to obtain and handle research-use-only materials and that you assume full responsibility for their lawful and appropriate use.</p>
+
+      <h2>Limitation of Liability</h2>
+      <p>PeptidesCanada shall not be held liable for misuse, improper handling, unauthorized use, unlawful use, or any use that falls outside the stated research-use-only purpose of its products.</p>
+      <p>Customers agree to assume all responsibility for proper handling, storage, documentation review, and compliance with applicable rules and regulations.</p>
+
+      <h2>Accuracy of Information</h2>
+      <p>While PeptidesCanada strives to provide accurate, current, and useful information, we do not guarantee that all website content, product information, availability, pricing, or documentation is complete, error-free, or up to date at all times.</p>
+      <p>Product information may be updated, revised, or removed without prior notice.</p>
+
+      <h2>External Links</h2>
+      <p>Our website may contain links to third-party websites or external resources.</p>
+      <p>PeptidesCanada is not responsible for the content, accuracy, policies, practices, or reliability of any third-party websites.</p>
+
+      <h2>Compliance Notice</h2>
+      <p>PeptidesCanada operates with a strong focus on research-use-only positioning, responsible communication, and clear product labeling.</p>
+      <p>Customers are expected to review all applicable laws and regulations before purchasing or handling any research-use-only product.</p>
+
+      <h2>Important Notice</h2>
+      <p>All PeptidesCanada products are sold strictly for laboratory and research use only.</p>
+      <p>They are not for human consumption and are not intended to diagnose, treat, cure, or prevent any disease.</p>
+      <p class="closing-line">Precision. Transparency. Performance.</p>
+    </section>
+""",
+        },
+        "about.html": {
+            "title": "About PeptidesCanada | PeptidesCanada",
+            "desc": "About PeptidesCanada, a Canadian research peptide supplier focused on transparency, documentation, fulfillment, and research-use-only compliance.",
+            "canonical": "/about",
+            "active": "about",
+            "crumb": "About PeptidesCanada",
+            "body": """
+    <section class="content-page about-page">
+      <span class="eyebrow">Precision. Transparency. Performance.</span>
+      <h1>About PeptidesCanada</h1>
+      <p>PeptidesCanada is a Canadian-based supplier focused on providing premium research-use-only peptide products for laboratories, institutions, and qualified researchers who demand consistency, reliability, and transparency.</p>
+      <p>Our goal is simple: to make research-focused peptide sourcing in Canada more accessible without compromising on professionalism, documentation, or customer trust.</p>
+      <p>We understand that in research, precision matters. That is why every product we offer is selected with quality standards, documentation, and batch-level consistency in mind.</p>
+
+      <h2>Our Commitment to Quality</h2>
+      <p>Every product we supply is handled with a strong focus on quality control, clear labeling, and research-use-only compliance.</p>
+      <p>When available, product documentation may include analytical testing information such as HPLC data, purity information, product identity details, and batch-specific Certificates of Analysis.</p>
+      <p>Our quality standards include:</p>
+      <ul class="check-list">
+        <li>Third-party testing transparency</li>
+        <li>COA availability when applicable</li>
+        <li>Batch-level documentation support</li>
+        <li>Consistent sourcing standards</li>
+        <li>Secure handling and professional fulfillment</li>
+        <li>Clear product information for research customers</li>
+      </ul>
+      <p>We believe trust starts with transparency, and researchers deserve confidence in the materials they review and order.</p>
+
+      <h2>Built for Researchers Across Canada</h2>
+      <p>PeptidesCanada is designed to support a wide range of research customers, including laboratories, institutions, private facilities, and qualified independent professionals.</p>
+      <p>Our focus is not simply selling products. It is providing dependable access to research-use-only materials with clear product information, responsive support, and a professional purchasing experience.</p>
+      <p>Researchers choose PeptidesCanada because reliability saves time, reduces uncertainty, and supports more efficient research workflows.</p>
+
+      <h2>Fast, Secure Canadian Distribution</h2>
+      <p>Orders are processed and shipped from within Canada to support faster delivery, secure packaging, and smoother fulfillment for Canadian customers.</p>
+      <p>This allows us to provide:</p>
+      <ul class="check-list">
+        <li>Fast domestic shipping</li>
+        <li>Secure encrypted checkout</li>
+        <li>Discreet and professional packaging</li>
+        <li>Reliable order tracking when available</li>
+        <li>Responsive customer support</li>
+      </ul>
+      <p>We know speed, clarity, and consistency matter when research timelines are important.</p>
+
+      <h2>Transparency &amp; Responsibility</h2>
+      <p>We operate with a strong focus on compliance, responsibility, and clear communication.</p>
+      <p>Detailed product information and available supporting documentation are provided to help research customers make informed decisions.</p>
+      <p>We are committed to maintaining high standards within the research supply industry and expect the same level of responsibility from our customers.</p>
+
+      <h2>Important Notice</h2>
+      <p>All products sold by PeptidesCanada are intended strictly for research and laboratory use only.</p>
+      <p>They are not for human consumption and are not intended to diagnose, treat, cure, or prevent any disease.</p>
+      <p>By purchasing from our store, you confirm that you are authorized to use these materials for legitimate research purposes and in accordance with all applicable laws and regulations in your jurisdiction.</p>
+      <p class="closing-line">Precision. Transparency. Performance.</p>
+    </section>
+""",
+        },
+        "data-sharing-opt-out.html": {
+            "title": "Data Sharing Opt-Out | PeptidesCanada",
+            "desc": "Data sharing opt-out information for visitors who want to manage privacy preferences and personal information use.",
+            "canonical": "/data-sharing-opt-out",
+            "active": "",
+            "crumb": "Data Sharing Opt-Out",
+            "body": """
+    <section class="content-page legal-page">
+      <span class="eyebrow">Privacy preferences</span>
+      <h1>Data Sharing Opt-Out</h1>
+      <p>As described in our Privacy Policy, we collect personal information from your interactions with us and our website, including through cookies and similar technologies. We may also share this personal information with third parties, including advertising partners.</p>
+      <p>We do this in order to show you ads on other websites that are more relevant to your interests and for other reasons outlined in our privacy policy.</p>
+      <p>Sharing of personal information for targeted advertising based on your interaction on different websites may be considered "sales", "sharing", or "targeted advertising" under certain U.S. state privacy laws.</p>
+      <p>Depending on where you live, you may have the right to opt out of these activities. If you would like to exercise this opt-out right, please contact us through our contact page and include the email address associated with your inquiry or order.</p>
+      <p>If you visit our website with the Global Privacy Control opt-out preference signal enabled, depending on where you are, we will treat this as a request to opt out of activity that may be considered a sale or sharing of personal information or other uses that may be considered targeted advertising for the device and browser you used to visit our website.</p>
+    </section>
+""",
+        },
+        "terms.html": {
+            "title": "Terms of Service | PeptidesCanada",
+            "desc": "Terms of Service for PeptidesCanada, including research-use-only terms, customer responsibility, compliance, orders, payments, and shipping.",
+            "canonical": "/terms",
+            "active": "",
+            "crumb": "Terms of Service",
+            "body": """
+    <section class="content-page legal-page">
+      <span class="eyebrow">Policies &amp; Compliance</span>
+      <h1>Terms of Service</h1>
+      <p>These Terms of Service govern your use of the PeptidesCanada website and the purchase of products offered through our store.</p>
+
+      <h2>Use of Products</h2>
+      <p>All products sold by PeptidesCanada are intended strictly for research and laboratory use only.</p>
+      <p>Our products are not for human consumption and are not intended to diagnose, treat, cure, or prevent any disease.</p>
+      <p>By purchasing from this website, you confirm that you are qualified and authorized to use these materials for legitimate research purposes.</p>
+
+      <h2>Compliance with Laws</h2>
+      <p>It is the responsibility of the customer to ensure that the purchase and use of our products complies with all applicable laws and regulations in their jurisdiction.</p>
+      <p>PeptidesCanada shall not be held liable for any misuse or improper handling of products.</p>
+
+      <h2>Orders &amp; Payments</h2>
+      <p>We accept payment via major credit cards.</p>
+      <p>All orders are subject to review and may be refused or canceled at our discretion.</p>
+
+      <h2>Shipping</h2>
+      <p>We offer international shipping. Orders shipped within Canada are typically delivered faster due to domestic processing.</p>
+      <p>Delivery times may vary depending on location and shipping conditions.</p>
+
+      <h2>Limitation of Liability</h2>
+      <p>PeptidesCanada shall not be held responsible for any damages arising from the use or misuse of its products.</p>
+      <p>All products are provided "as is" without any warranties, express or implied.</p>
+
+      <h2>Changes to Terms</h2>
+      <p>We reserve the right to update or modify these Terms of Service at any time without prior notice.</p>
+      <p>Continued use of this website constitutes acceptance of any changes.</p>
+      <p class="closing-line">Precision. Purity. Performance.</p>
+    </section>
+""",
+        },
+        "privacy.html": {
+            "title": "Privacy Policy | PeptidesCanada",
+            "desc": "Privacy Policy for PeptidesCanada, including information collection, use, sharing, cookies, data security, and privacy rights.",
+            "canonical": "/privacy",
+            "active": "",
+            "crumb": "Privacy Policy",
+            "body": """
+    <section class="content-page legal-page">
+      <span class="eyebrow">Privacy &amp; Data</span>
+      <h1>Privacy Policy</h1>
+      <p>This Privacy Policy describes how PeptidesCanada collects, uses, and protects your personal information when you visit or make a purchase from our website.</p>
+
+      <h2>Information We Collect</h2>
+      <p>When you visit our site, we may collect certain information automatically, including your device information, browser type, IP address, and browsing behavior.</p>
+      <p>When you make a purchase or attempt to make a purchase, we collect personal information such as your name, billing address, shipping address, payment details, email address, and phone number.</p>
+
+      <h2>How We Use Your Information</h2>
+      <p>We use the information we collect to:</p>
+      <ul>
+        <li>Process and fulfill orders</li>
+        <li>Communicate with you</li>
+        <li>Provide customer support</li>
+        <li>Improve and optimize our website</li>
+        <li>Prevent fraud and enhance security</li>
+      </ul>
+
+      <h2>Sharing Your Information</h2>
+      <p>We may share your information with trusted third-party service providers to help us operate our business, such as payment processors and shipping providers.</p>
+      <p>We may also share information if required by law or to protect our legal rights.</p>
+
+      <h2>Cookies</h2>
+      <p>Our website uses cookies to improve your browsing experience and analyze website traffic.</p>
+      <p>You can choose to disable cookies through your browser settings.</p>
+
+      <h2>Data Security</h2>
+      <p>We take reasonable precautions to protect your personal information and follow industry best practices to ensure it is not lost, misused, or accessed without authorization.</p>
+
+      <h2>Your Rights</h2>
+      <p>Depending on your location, you may have the right to access, correct, or delete your personal information.</p>
+      <p>You may contact us to request access or corrections to your data.</p>
+
+      <h2>Changes to This Policy</h2>
+      <p>We reserve the right to update this Privacy Policy at any time. Changes will take effect immediately upon posting on this page.</p>
+
+      <h2>Contact</h2>
+      <p>If you have any questions regarding this Privacy Policy, you may contact us through our contact page.</p>
+      <p class="closing-line">Precision. Purity. Performance.</p>
+    </section>
+""",
+        },
+        "refund.html": {
+            "title": "Refund Policy | PeptidesCanada",
+            "desc": "Refund Policy for PeptidesCanada orders, final sale terms, damaged or incorrect orders, cancellations, and shipping issues.",
+            "canonical": "/refund",
+            "active": "",
+            "crumb": "Refund Policy",
+            "body": """
+    <section class="content-page legal-page">
+      <span class="eyebrow">Order support</span>
+      <h1>Refund Policy</h1>
+      <p>At PeptidesCanada, we strive to ensure that all orders are processed accurately and delivered in proper condition.</p>
+
+      <h2>All Sales Final</h2>
+      <p>Due to the nature of our products, all sales are considered final.</p>
+      <p>We do not accept returns or offer refunds once an order has been processed and shipped.</p>
+
+      <h2>Damaged or Incorrect Orders</h2>
+      <p>If you receive a damaged or incorrect item, please contact us within 48 hours of delivery.</p>
+      <p>To assist you, we may request:</p>
+      <ul>
+        <li>Order number</li>
+        <li>Photos of the damaged or incorrect item</li>
+      </ul>
+      <p>Once reviewed, we will determine the appropriate resolution, which may include a replacement or store credit.</p>
+
+      <h2>Order Changes &amp; Cancellations</h2>
+      <p>Orders cannot be modified or canceled once they have been processed.</p>
+      <p>If you need to make a change, please contact us as soon as possible after placing your order.</p>
+
+      <h2>Shipping Issues</h2>
+      <p>PeptidesCanada is not responsible for delays caused by carriers, customs, or incorrect shipping information provided by the customer.</p>
+      <p>Customers are responsible for ensuring that all shipping details are accurate at the time of purchase.</p>
+
+      <h2>Important Notice</h2>
+      <p>All products sold by PeptidesCanada are intended strictly for research and laboratory use only.</p>
+      <p>They are not for human consumption and are not intended to diagnose, treat, cure, or prevent any disease.</p>
+      <p>By placing an order, you acknowledge and agree to these terms.</p>
+      <p class="closing-line">Precision. Purity. Performance.</p>
+    </section>
+""",
+        },
+        "shipping.html": {
+            "title": "Shipping Policy | PeptidesCanada",
+            "desc": "Shipping Policy for PeptidesCanada orders, including shipping locations, processing time, delivery time, tracking, and customs duties.",
+            "canonical": "/shipping",
+            "active": "",
+            "crumb": "Shipping Policy",
+            "body": """
+    <section class="content-page legal-page">
+      <span class="eyebrow">Fulfillment</span>
+      <h1>Shipping Policy</h1>
+      <p>At PeptidesCanada, we are committed to processing and delivering your orders as efficiently as possible.</p>
+
+      <h2>Shipping Locations</h2>
+      <p>We offer shipping worldwide. Orders shipped within Canada typically arrive faster due to domestic processing.</p>
+
+      <h2>Processing Time</h2>
+      <p>All orders are processed within 1-2 business days after payment confirmation.</p>
+
+      <h2>Delivery Time</h2>
+      <p>Delivery times may vary depending on the destination. However, most orders are delivered within up to 2 weeks.</p>
+      <ul>
+        <li>Canada: Faster delivery times, typically a few business days</li>
+        <li>International: Up to 2 weeks depending on location</li>
+      </ul>
+
+      <h2>Order Tracking</h2>
+      <p>Tracking information is provided once your order has been shipped.</p>
+
+      <h2>Shipping Responsibility</h2>
+      <p>Customers are responsible for providing accurate shipping information. PeptidesCanada is not responsible for delays caused by carriers, customs, or incorrect address details.</p>
+
+      <h2>Customs &amp; Duties</h2>
+      <p>International orders may be subject to customs fees or import duties. These charges are the responsibility of the customer.</p>
+
+      <h2>Important Notice</h2>
+      <p>All products sold by PeptidesCanada are intended strictly for research and laboratory use only.</p>
+      <p>They are not for human consumption and are not intended to diagnose, treat, cure, or prevent any disease.</p>
+      <p>By placing an order, you acknowledge and agree to these terms.</p>
+      <p class="closing-line">Precision. Purity. Performance.</p>
+    </section>
+""",
+        },
+    }
+
+    for filename, page in pages.items():
+        write(
+            filename,
+            render_document(
+                page["title"],
+                page["desc"],
+                page["canonical"],
+                page["active"],
+                page["body"],
+                extra_ld=[breadcrumb([("Home", "/"), (page["crumb"], page["canonical"])])],
+            ),
+        )
+
+
 def render_contact_page() -> None:
     body = """
     <section class="content-page contact-page">
@@ -1001,6 +1378,7 @@ def main() -> None:
     render_collections()
     render_product_pages()
     render_simple_pages()
+    render_content_pages()
     render_lab_testing_page()
     render_contact_page()
     update_existing_shells()
