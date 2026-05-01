@@ -556,7 +556,7 @@ def header(active: str) -> str:
                 for p in [PRODUCT_BY_HANDLE["bacteriostatic-water-10ml"], PRODUCT_BY_HANDLE["bpc-157"], PRODUCT_BY_HANDLE["cjc-1295-10-mg"]]
             )
             nav.append(
-                f'<div class="nav-dropdown" data-shop-menu><a class="nav-shop-trigger {cls}" href="/products" aria-expanded="false" data-shop-trigger>{label}<span>v</span></a><div class="nav-menu mega-menu"><div class="mega-head"><div><strong>Shop by category</strong><p>Find products based on your research goals and peptide category.</p></div><a href="/products">View full catalog</a></div><div class="mega-category-grid">{category_tiles}</div><div class="mega-products"><div><h3>Featured Products</h3><a href="/products">Browse all</a></div>{featured_tiles}</div><a class="mega-cta" href="/products">View full catalog -></a></div></div>'
+                f'<div class="nav-dropdown" data-shop-menu><a class="nav-shop-trigger {cls}" href="/products" aria-expanded="false" data-shop-trigger>{label}<span>v</span></a><div class="nav-menu mega-menu"><div class="mega-head"><div><strong>Shop by category</strong><p>Find products based on your research goals and peptide category.</p></div><a href="/products">View full catalog</a></div><div class="mega-category-grid">{category_tiles}</div><div class="mega-products"><div class="mega-products-head"><h3>Featured Products</h3><a href="/products">Browse all</a></div><div class="mega-product-grid">{featured_tiles}</div></div><a class="mega-cta" href="/products">View full catalog -></a></div></div>'
             )
         else:
             nav.append(f'<a class="{cls}" href="{href}">{label}</a>')
@@ -627,7 +627,7 @@ def compact_category(collection: dict) -> str:
 def compact_product(product: dict) -> str:
     return f"""
     <a class="compact-product" href="/products/{product["handle"]}">
-      <img src="/assets/products/{product["image"]}" alt="{esc(product["title"])} product vial" width="80" height="80" loading="lazy" decoding="async"><span><strong>{esc(product["title"])}</strong><em>{money(product["price"])}</em></span>
+      <img src="/assets/products/{product["image"]}" alt="{esc(product["title"])} product vial" width="80" height="80" loading="lazy" decoding="async"><span><strong>{esc(product["title"])}</strong><em>{money(product["price"])}</em><small>View product</small></span>
     </a>
 """
 
@@ -763,7 +763,7 @@ def render_products() -> None:
 def render_collections() -> None:
     body = f"""
     <section class="products-hero compact"><span class="eyebrow">Shop by category</span><h1>Research categories</h1><p>Compact category browsing with collection images, product counts, and clear paths into the catalog.</p></section>
-    <section class="section shop-category-panel"><div class="section-heading split-heading"><div><h2>Shop by Category</h2><p>Find products based on research goals and peptide category.</p></div><a href="/products">View full catalog</a></div><div class="category-row-grid">{"".join(compact_category(c) for c in COLLECTIONS)}</div><div class="featured-strip"><div><h3>Featured Products</h3><a href="/products">Browse all</a></div>{"".join(compact_product(p) for p in PRODUCTS[:3])}</div></section>
+    <section class="section shop-category-panel"><div class="section-heading split-heading"><div><h2>Shop by Category</h2><p>Find products based on research goals and peptide category.</p></div><a href="/products">View full catalog</a></div><div class="category-row-grid">{"".join(compact_category(c) for c in COLLECTIONS)}</div><div class="featured-strip"><div class="featured-strip-head"><h3>Featured Products</h3><a href="/products">Browse all</a></div><div class="featured-product-grid">{"".join(compact_product(p) for p in PRODUCTS[:3])}</div></div><a class="shop-category-cta" href="/products">View full catalog -></a></section>
 """
     write("collections/index.html", render_document("Research Categories | PeptidesCanada", "Browse PeptidesCanada research categories with collection images, product counts, and research-use-only product paths.", "/collections", "collections", body, extra_ld=[breadcrumb([("Home", "/"), ("Collections", "/collections")])]))
     write("collections/frontpage.html", (ROOT / "products.html").read_text(encoding="utf-8"))
@@ -868,7 +868,7 @@ def render_lab_testing_page() -> None:
 
       <h2>Access to COAs</h2>
       <p>Batch-specific COAs are available for transparency.</p>
-      <p>You can access them directly on individual product pages or by request via email at <a href="mailto:support@peptidescanada.store">support@peptidescanada.store</a>.</p>
+      <p>You can access them directly on individual product pages or by submitting a support request through our contact page.</p>
       <p>It is recommended to match the batch number on your product with the corresponding COA.</p>
 
       <h2>Information Included in a COA</h2>
@@ -920,10 +920,10 @@ def render_contact_page() -> None:
           </ul>
         </section>
         <section class="contact-copy-card accent">
-          <span class="eyebrow">Support Email</span>
-          <h2>support@peptidescanada.store</h2>
+          <span class="eyebrow">Support Requests</span>
+          <h2>Product documentation and order support</h2>
           <p>Include your product name, order number, and any batch information available so our team can review your request faster.</p>
-          <a class="btn btn-primary" href="mailto:support@peptidescanada.store">Email Support</a>
+          <a class="btn btn-primary" href="/contact#research-updates">Get Updates</a>
         </section>
       </div>
 
@@ -953,7 +953,7 @@ def render_contact_page() -> None:
         <p>PeptidesCanada does not provide medical advice, dosage guidance, human-use instructions, or treatment recommendations.</p>
       </section>
 
-      <form class="updates-card contact-updates-card" data-subscribe-form>
+      <form id="research-updates" class="updates-card contact-updates-card" data-subscribe-form>
         <div><span class="eyebrow">Research updates</span><h2>Join Our Research Updates</h2><p>New product alerts, restock notes, and concise research-grade catalog updates.</p></div>
         <div class="subscribe-fields"><input type="email" name="email" placeholder="Email address" autocomplete="email" required><button class="btn btn-primary" type="submit">Subscribe</button></div>
         <p class="form-message" data-form-message></p>
