@@ -3748,3 +3748,53 @@ body.cart-open .cart-drawer {
     width: 100%;
   }
 }
+
+/* =====================================================
+   Mobile header: Shop link (hidden on desktop nav)
+   ===================================================== */
+.header-shop-link {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .header-shop-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
+    background: transparent;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 100ms ease, border-color 100ms ease;
+  }
+
+  .header-shop-link:hover,
+  .header-shop-link:active {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  /* =====================================================
+     Fix: cancel CSS :focus-within auto-expand of the
+     Shop mega-menu on mobile. Only .is-open (set by JS
+     on explicit tap) should open it.
+     ===================================================== */
+  .nav-dropdown:hover .nav-menu,
+  .nav-dropdown:focus-within .nav-menu {
+    display: none !important;
+  }
+
+  .nav-dropdown.is-open .nav-menu {
+    display: block !important;
+  }
+}

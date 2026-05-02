@@ -91,7 +91,9 @@
   shopMenus.forEach((menu) => {
     menu.addEventListener("mouseenter", () => openShopMenu(menu));
     menu.addEventListener("mouseleave", () => scheduleShopClose(menu));
-    menu.addEventListener("focusin", () => openShopMenu(menu));
+    menu.addEventListener("focusin", () => {
+      if (window.innerWidth > 1100) openShopMenu(menu);
+    });
     menu.addEventListener("focusout", () => {
       window.setTimeout(() => {
         if (!menu.contains(document.activeElement)) scheduleShopClose(menu);
@@ -100,6 +102,19 @@
   });
   document.addEventListener("click", (event) => {
     if (!event.target.closest("[data-shop-menu]")) closeShopMenus();
+  });
+
+  // Mobile: tap the Shop trigger to toggle dropdown (instead of navigating)
+  shopMenus.forEach((menu) => {
+    const trigger = menu.querySelector("[data-shop-trigger]");
+    if (!trigger) return;
+    trigger.addEventListener("click", (event) => {
+      if (window.innerWidth > 1100) return; // desktop: hover handles it
+      event.preventDefault();
+      const isOpen = menu.classList.contains("is-open");
+      closeShopMenus();
+      if (!isOpen) openShopMenu(menu);
+    });
   });
 
   function openCart() {
