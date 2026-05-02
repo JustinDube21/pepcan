@@ -3,40 +3,58 @@ const { normalizeCartItems } = require("../lib/catalog");
 const { json, readJson, siteUrl } = require("../lib/utils");
 
 module.exports = async function handler(req, res) {
-  if (req.method !== "POST") return json(res, 405, { error: "Method not allowed." });
+  if (req.method !== "POST") {
+    return json(res, 405, { error: "Method not allowed." });
+  }
+
   if (!process.env.STRIPE_SECRET_KEY) {
-    return json(res, 503, { error: "Stripe is not configured. Add STRIPE_SECRET_KEY in Vercel." });
+    return json(res, 503, {
+      error: "Stripe is not configured. Add STRIPE_SECRET_KEY in Vercel.",
+    });
   }
 
   try {
     const body = await readJson(req);
     const items = normalizeCartItems(body.items);
     const origin = siteUrl(req);
+
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-    const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
+
+    const subtotal = items.reduce(
+      (sum, item) => sum + item.lineTotal,
+      0
+    );
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
 
-      // 🔥 Adresse de livraison OBLIGATOIRE
+      // ✅ EMAIL CLIENT
+      customer_email: body.email || undefined,
+
+      // 📦 SHIPPING
       shipping_address_collection: {
         allowed_countries: ["CA", "US"],
       },
 
-      // 🔥 Adresse de facturation OBLIGATOIRE
+      // 🧾 BILLING
       billing_address_collection: "required",
 
-      // 🔥 Téléphone (optionnel mais utile)
-      phone_number_collection: { enabled: true },
+      // 📞 PHONE
+      phone_number_collection: {
+        enabled: true,
+      },
 
       allow_promotion_codes: true,
 
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cancel`,
 
+      // 🧠 METADATA (pour webhook → Supabase)
       metadata: {
         source: "pepcan_static_storefront",
-        subtotal_cents: String(subtotal),
+        subtotal_cents: String(Math.round(subtotal * 100)),
+        user_id: body.userId || "guest",
+
         cart: JSON.stringify(
           items.map((item) => ({
             handle: item.handle,
@@ -45,9 +63,10 @@ module.exports = async function handler(req, res) {
             quantity: item.quantity,
             unitAmount: item.unitAmount,
           }))
-        ).slice(0, 450),
+        ).slice(0, 400), // ⚠️ limite Stripe
       },
 
+      // 🛒 PRODUITS
       line_items: items.map((item) => ({
         quantity: item.quantity,
         price_data: {
@@ -69,7 +88,10 @@ module.exports = async function handler(req, res) {
       })),
     });
 
-    return json(res, 200, { url: session.url, id: session.id });
+    return json(res, 200, {
+      url: session.url,
+      id: session.id,
+    });
   } catch (error) {
     return json(res, 400, {
       error: error.message || "Unable to create Stripe Checkout session.",
