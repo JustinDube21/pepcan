@@ -3833,3 +3833,29 @@ body.cart-open .cart-drawer {
     white-space: nowrap !important;
   }
 }
+/* Mobile header alignment fix */
+@media (max-width: 720px) {
+  .site-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    margin-left: 0;
+  }
+
+  .header-actions .icon-btn {
+    width: 38px;
+    height: 38px;
+    margin-left: 0 !important;
+  }
+
+  .cart-count {
+    top: 1px;
+    right: -2px;
+  }
+}
