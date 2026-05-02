@@ -3798,3 +3798,379 @@ body.cart-open .cart-drawer {
     display: block !important;
   }
 }
+@media (max-width: 720px) {
+  .header-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+  }
+
+  .header-actions a[href*="shop"],
+  .header-actions .shop-link,
+  .header-actions .shop-button {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    padding: 0 !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: 1px solid var(--pc-line) !important;
+    border-radius: 6px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+
+    color: #f5c542 !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.03em !important;
+    text-transform: none !important;
+    line-height: 1 !important;
+
+    position: static !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+  }
+}
+/* Mobile header alignment fix */
+@media (max-width: 720px) {
+  .site-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    margin-left: 0;
+  }
+
+  .header-actions .icon-btn {
+    width: 38px;
+    height: 38px;
+    margin-left: 0 !important;
+  }
+
+  .cart-count {
+    top: 1px;
+    right: -2px;
+  }
+}
+/* Clean mobile header layout */
+@media (max-width: 720px) {
+  .site-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.45rem;
+    padding: 0.65rem 0.75rem;
+    overflow: visible;
+  }
+
+  .brand {
+    display: none !important;
+  }
+
+  .header-actions {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    width: auto;
+    margin-left: auto;
+  }
+
+  /* Hide full search input on mobile */
+  .header-search,
+  .search-form,
+  .search-bar,
+  .search-input,
+  .search-field {
+    display: none !important;
+  }
+
+  /* Keep only the search icon button */
+  .search-toggle,
+  .header-actions .icon-btn,
+  .menu-toggle {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+  }
+
+  .header-shop-link,
+  .nav-cta,
+  .shop-link {
+    height: 42px;
+    min-height: 42px;
+    padding: 0 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menu-toggle {
+    display: inline-flex !important;
+    position: relative;
+    z-index: 90;
+    order: 99;
+  }
+
+  .primary-nav {
+    top: 100%;
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+  }
+
+  body,
+  html {
+    overflow-x: hidden;
+  }
+}
+/* Mobile header with logo on the left */
+@media (max-width: 720px) {
+  .site-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  /* Remet le logo */
+  .brand {
+    display: block !important;
+    flex: 0 0 auto;
+  }
+
+  .brand img {
+    width: 110px; /* ajuste si trop gros */
+    height: auto;
+  }
+
+  /* Actions à droite */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: auto;
+  }
+}
+/* Prevent Shop dropdown from auto-opening on mobile */
+@media (max-width: 720px) {
+  .nav-dropdown .nav-menu,
+  .nav-dropdown .mega-menu {
+    display: none !important;
+  }
+
+  .nav-dropdown.is-open .nav-menu,
+  .nav-dropdown.is-open .mega-menu {
+    display: grid !important;
+  }
+}
+/* Clean mobile Shop dropdown layout */
+@media (max-width: 720px) {
+  .nav-dropdown.is-open .mega-menu,
+  .nav-dropdown.is-open .nav-menu {
+    display: block !important;
+    width: 100% !important;
+    padding: 1rem !important;
+    overflow: visible !important;
+  }
+
+  .mega-menu,
+  .nav-menu {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .mega-menu-grid,
+  .nav-menu {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+
+  .mega-menu-card,
+  .nav-menu a,
+  .category-row-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 72px 1fr !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+    padding: 0.75rem !important;
+    overflow: hidden !important;
+  }
+
+  .mega-menu-card img,
+  .nav-menu a img,
+  .category-row-card img {
+    width: 72px !important;
+    height: 72px !important;
+    object-fit: cover !important;
+    flex: none !important;
+  }
+
+  .mega-menu-card strong,
+  .nav-menu a strong,
+  .category-row-card strong {
+    font-size: 0.95rem !important;
+    line-height: 1.1 !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .mega-menu-card p,
+  .nav-menu a small,
+  .category-row-card small {
+    font-size: 0.78rem !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .mega-menu-featured,
+  .featured-strip,
+  .featured-product-grid {
+    display: none !important;
+  }
+}
+/* FINAL mobile hamburger dropdown fix */
+@media (max-width: 720px) {
+  .primary-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    overflow-y: auto !important;
+  }
+
+  .nav-dropdown {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .nav-dropdown .mega-menu,
+  .nav-dropdown .nav-menu {
+    position: static !important;
+    display: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0.75rem 0 1rem !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  .nav-dropdown.is-open .mega-menu,
+  .nav-dropdown.is-open .nav-menu {
+    display: block !important;
+  }
+
+  .mega-category-grid,
+  .mega-product-grid,
+  .featured-product-grid,
+  .nav-menu {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+
+  .mega-category-card,
+  .mega-product-card,
+  .category-row-card,
+  .nav-menu a {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 82px 1fr !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+    margin: 0 !important;
+  }
+
+  .primary-nav > a {
+    position: relative !important;
+    z-index: 1 !important;
+    display: flex !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    align-items: center !important;
+  }
+}
+/* Fix "View full catalog" button mobile */
+@media (max-width: 720px) {
+
+  .mega-menu a[href*="catalog"],
+  .view-full-catalog,
+  .catalog-link {
+    display: block !important;
+    width: 100% !important;
+
+    margin-top: 1rem !important;
+    padding: 0.9rem 1rem !important;
+
+    text-align: center !important;
+
+    background: #e00000 !important;
+    color: #fff !important;
+
+    font-weight: 900 !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+
+    border-radius: 8px !important;
+    border: 1px solid #e00000 !important;
+
+    white-space: nowrap !important;
+  }
+
+  .mega-menu a[href*="catalog"]:hover {
+    background: #ff1a1a !important;
+  }
+
+}
+/* Final fix: View Full Catalog button inside mobile Shop dropdown */
+@media (max-width: 720px) {
+  .nav-dropdown.is-open .mega-cta,
+  .nav-dropdown.is-open .mega-head > a,
+  .nav-dropdown.is-open .mega-products-head a {
+    display: inline-flex !important;
+    width: 100% !important;
+    min-height: 46px !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 1rem 0 0 !important;
+    padding: 0.85rem 1rem !important;
+
+    background: #e00000 !important;
+    color: #fff !important;
+    border: 1px solid #e00000 !important;
+    border-radius: 8px !important;
+
+    font-size: 0.82rem !important;
+    font-weight: 950 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+  }
+
+  .nav-dropdown.is-open .mega-cta br,
+  .nav-dropdown.is-open .mega-head > a br,
+  .nav-dropdown.is-open .mega-products-head a br {
+    display: none !important;
+  }
+}
