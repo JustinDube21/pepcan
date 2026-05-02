@@ -3931,3 +3931,31 @@ body.cart-open .cart-drawer {
     overflow-x: hidden;
   }
 }
+/* Mobile header with logo on the left */
+@media (max-width: 720px) {
+  .site-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  /* Remet le logo */
+  .brand {
+    display: block !important;
+    flex: 0 0 auto;
+  }
+
+  .brand img {
+    width: 110px; /* ajuste si trop gros */
+    height: auto;
+  }
+
+  /* Actions à droite */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: auto;
+  }
+}
