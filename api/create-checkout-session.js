@@ -1,59 +1,93 @@
-const session = await stripe.checkout.sessions.create({
-  mode: "payment",
+const Stripe = require("stripe");
+const { normalizeCartItems } = require("../lib/catalog");
+const { json, readJson, siteUrl } = require("../lib/utils");
 
-  customer_creation: "always",
+module.exports = async function handler(req, res) {
+  if (req.method !== "POST") {
+    return json(res, 405, { error: "Method not allowed." });
+  }
 
-  customer_email: body.email || undefined,
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return json(res, 503, {
+      error: "Stripe not configured",
+    });
+  }
 
-  shipping_address_collection: {
-    allowed_countries: ["CA", "US"],
-  },
+  try {
+    const body = await readJson(req);
 
-  billing_address_collection: "required",
+    // ✅ VALIDATION (TRÈS IMPORTANT)
+    if (!body || !body.items || !Array.isArray(body.items)) {
+      return json(res, 400, {
+        error: "Invalid cart data",
+      });
+    }
 
-  phone_number_collection: {
-    enabled: true,
-  },
+    const items = normalizeCartItems(body.items);
+    const origin = siteUrl(req);
 
-  allow_promotion_codes: true,
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-  success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-  cancel_url: `${origin}/cancel`,
+    const subtotal = items.reduce(
+      (sum, item) => sum + item.lineTotal,
+      0
+    );
 
-  metadata: {
-    source: "pepcan_static_storefront",
-    subtotal_cents: String(subtotal), // ✅ FIX ICI
-    user_id: body.userId || "guest",
-    shipping_enabled: "true",
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
 
-    cart: JSON.stringify(
-      items.map((item) => ({
-        handle: item.handle,
-        title: item.title,
-        variant: item.variant,
-        quantity: item.quantity,
-        unitAmount: item.unitAmount,
-      }))
-    ).slice(0, 400),
-  },
+      customer_creation: "always",
 
-  line_items: items.map((item) => ({
-    quantity: item.quantity,
-    price_data: {
-      currency: "cad",
-      unit_amount: item.unitAmount,
-      product_data: {
-        name:
-          item.variant === "1 vial"
-            ? item.title
-            : `${item.title} - ${item.variant}`,
-        description: `${item.category} research-use-only product`,
-        images: [`${origin}${item.image}`],
-        metadata: {
-          handle: item.handle,
-          variant: item.variant,
-        },
+      customer_email: body.email ?? undefined,
+
+      shipping_address_collection: {
+        allowed_countries: ["CA", "US"],
       },
-    },
-  })),
-});
+
+      billing_address_collection: "required",
+
+      phone_number_collection: {
+        enabled: true,
+      },
+
+      allow_promotion_codes: true,
+
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/cancel`,
+
+      metadata: {
+        source: "pepcan",
+        subtotal_cents: String(subtotal), // ✅ OK
+        user_id: body.userId || "guest",
+
+        cart: JSON.stringify(items).slice(0, 400),
+      },
+
+      line_items: items.map((item) => ({
+        quantity: item.quantity,
+        price_data: {
+          currency: "cad",
+          unit_amount: item.unitAmount,
+          product_data: {
+            name:
+              item.variant === "1 vial"
+                ? item.title
+                : `${item.title} - ${item.variant}`,
+            images: [`${origin}${item.image}`],
+          },
+        },
+      })),
+    });
+
+    return json(res, 200, {
+      url: session.url,
+    });
+
+  } catch (error) {
+    console.error("STRIPE ERROR:", error);
+
+    return json(res, 500, {
+      error: error.message,
+    });
+  }
+};
