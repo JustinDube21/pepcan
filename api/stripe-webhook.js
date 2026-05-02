@@ -31,18 +31,11 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // 🎯 PAYMENT SUCCESS
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
 
     const items = safeParseCart(session.metadata?.cart);
-
-    const subtotal =
-      Number(
-        session.amount_total ||
-          session.metadata?.subtotal_cents ||
-          0
-      ) / 100;
+    const subtotal = Number(session.amount_total || session.metadata?.subtotal_cents || 0) / 100;
 
     try {
       await supabase("orders?on_conflict=stripe_session_id", {
@@ -53,46 +46,37 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({
           stripe_session_id: session.id,
 
-          // 👤 CLIENT
           customer_name:
             session.customer_details?.name ||
             session.shipping_details?.name ||
             null,
-
           customer_email: session.customer_details?.email || null,
           customer_phone: session.customer_details?.phone || null,
 
-          // 💳 STATUS
           status: "paid",
           subtotal,
           currency: String(session.currency || "cad").toUpperCase(),
 
-          // 📦 SHIPPING
           shipping_name: session.shipping_details?.name || null,
           shipping_address: session.shipping_details?.address || null,
 
-          // 🧾 BILLING
           billing_name: session.customer_details?.name || null,
           billing_address: session.customer_details?.address || null,
 
-          // 🛒 ITEMS
           items,
-
-          // 🧠 FULL DEBUG (optionnel)
           metadata: session,
         }),
       });
 
-      console.log("✅ Order saved in Supabase:", session.id);
+      console.log("Order saved in Supabase:", session.id);
     } catch (error) {
-      console.error("❌ Supabase error:", error);
+      console.error("Unable to persist Stripe order", error);
     }
   }
 
   return json(res, 200, { received: true });
 };
 
-// 🔧 SAFE PARSE
 function safeParseCart(value) {
   try {
     return value ? JSON.parse(value) : [];
