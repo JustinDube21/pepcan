@@ -4107,3 +4107,70 @@ body.cart-open .cart-drawer {
     align-items: center !important;
   }
 }
+/* Fix "View full catalog" button mobile */
+@media (max-width: 720px) {
+
+  .mega-menu a[href*="catalog"],
+  .view-full-catalog,
+  .catalog-link {
+    display: block !important;
+    width: 100% !important;
+
+    margin-top: 1rem !important;
+    padding: 0.9rem 1rem !important;
+
+    text-align: center !important;
+
+    background: #e00000 !important;
+    color: #fff !important;
+
+    font-weight: 900 !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+
+    border-radius: 8px !important;
+    border: 1px solid #e00000 !important;
+
+    white-space: nowrap !important;
+  }
+
+  .mega-menu a[href*="catalog"]:hover {
+    background: #ff1a1a !important;
+  }
+
+}
+/* Final fix: View Full Catalog button inside mobile Shop dropdown */
+@media (max-width: 720px) {
+  .nav-dropdown.is-open .mega-cta,
+  .nav-dropdown.is-open .mega-head > a,
+  .nav-dropdown.is-open .mega-products-head a {
+    display: inline-flex !important;
+    width: 100% !important;
+    min-height: 46px !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 1rem 0 0 !important;
+    padding: 0.85rem 1rem !important;
+
+    background: #e00000 !important;
+    color: #fff !important;
+    border: 1px solid #e00000 !important;
+    border-radius: 8px !important;
+
+    font-size: 0.82rem !important;
+    font-weight: 950 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+  }
+
+  .nav-dropdown.is-open .mega-cta br,
+  .nav-dropdown.is-open .mega-head > a br,
+  .nav-dropdown.is-open .mega-products-head a br {
+    display: none !important;
+  }
+}
