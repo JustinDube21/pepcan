@@ -3859,3 +3859,40 @@ body.cart-open .cart-drawer {
     right: -2px;
   }
 }
+/* Mobile hamburger + closed shop menu fix */
+@media (max-width: 720px) {
+  .site-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+  }
+
+  .brand {
+    grid-column: 1;
+  }
+
+  .header-actions {
+    grid-column: 2;
+    justify-content: flex-end;
+  }
+
+  .menu-toggle {
+    grid-column: 3;
+    justify-self: end;
+    order: 99;
+  }
+
+  .mega-menu,
+  .nav-menu {
+    display: none !important;
+  }
+
+  .nav-dropdown.is-open .mega-menu,
+  .nav-dropdown.is-open .nav-menu {
+    display: grid !important;
+  }
+
+  .primary-nav:not(.is-open) {
+    display: none !important;
+  }
+}
