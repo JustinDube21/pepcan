@@ -3959,3 +3959,15 @@ body.cart-open .cart-drawer {
     margin-left: auto;
   }
 }
+/* Prevent Shop dropdown from auto-opening on mobile */
+@media (max-width: 720px) {
+  .nav-dropdown .nav-menu,
+  .nav-dropdown .mega-menu {
+    display: none !important;
+  }
+
+  .nav-dropdown.is-open .nav-menu,
+  .nav-dropdown.is-open .mega-menu {
+    display: grid !important;
+  }
+}
