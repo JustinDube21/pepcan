@@ -16,7 +16,7 @@ module.exports = async function handler(req, res) {
   try {
     const body = await readJson(req);
 
-    // ✅ VALIDATION (TRÈS IMPORTANT)
+    // ✅ VALIDATION
     if (!body || !body.items || !Array.isArray(body.items)) {
       return json(res, 400, {
         error: "Invalid cart data",
@@ -32,6 +32,37 @@ module.exports = async function handler(req, res) {
       (sum, item) => sum + item.lineTotal,
       0
     );
+
+    // 🔥 SHIPPING LOGIC
+    const FREE_SHIPPING_THRESHOLD = 24999; // 249.99$
+    const SHIPPING_FEE = 1500; // 15$
+
+    const shippingOptions =
+      subtotal >= FREE_SHIPPING_THRESHOLD
+        ? [
+            {
+              shipping_rate_data: {
+                type: "fixed_amount",
+                fixed_amount: {
+                  amount: 0,
+                  currency: "cad",
+                },
+                display_name: "Complimentary Priority Shipping",
+              },
+            },
+          ]
+        : [
+            {
+              shipping_rate_data: {
+                type: "fixed_amount",
+                fixed_amount: {
+                  amount: SHIPPING_FEE,
+                  currency: "cad",
+                },
+                display_name: "Priority Shipping",
+              },
+            },
+          ];
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
@@ -50,6 +81,9 @@ module.exports = async function handler(req, res) {
         enabled: true,
       },
 
+      // 🔥 SHIPPING AJOUTÉ ICI
+      shipping_options: shippingOptions,
+
       allow_promotion_codes: true,
 
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
@@ -57,9 +91,11 @@ module.exports = async function handler(req, res) {
 
       metadata: {
         source: "pepcan",
-        subtotal_cents: String(subtotal), // ✅ OK
+        subtotal_cents: String(subtotal),
+        shipping_cents: String(
+          subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE
+        ),
         user_id: body.userId || "guest",
-
         cart: JSON.stringify(items).slice(0, 400),
       },
 
