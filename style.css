@@ -3859,40 +3859,75 @@ body.cart-open .cart-drawer {
     right: -2px;
   }
 }
-/* Mobile hamburger + closed shop menu fix */
+/* Clean mobile header layout */
 @media (max-width: 720px) {
   .site-header {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: flex !important;
     align-items: center;
+    justify-content: flex-end;
+    gap: 0.45rem;
+    padding: 0.65rem 0.75rem;
+    overflow: visible;
   }
 
   .brand {
-    grid-column: 1;
+    display: none !important;
   }
 
   .header-actions {
-    grid-column: 2;
+    display: flex !important;
+    align-items: center;
     justify-content: flex-end;
+    gap: 0.35rem;
+    width: auto;
+    margin-left: auto;
+  }
+
+  /* Hide full search input on mobile */
+  .header-search,
+  .search-form,
+  .search-bar,
+  .search-input,
+  .search-field {
+    display: none !important;
+  }
+
+  /* Keep only the search icon button */
+  .search-toggle,
+  .header-actions .icon-btn,
+  .menu-toggle {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+  }
+
+  .header-shop-link,
+  .nav-cta,
+  .shop-link {
+    height: 42px;
+    min-height: 42px;
+    padding: 0 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .menu-toggle {
-    grid-column: 3;
-    justify-self: end;
+    display: inline-flex !important;
+    position: relative;
+    z-index: 90;
     order: 99;
   }
 
-  .mega-menu,
-  .nav-menu {
-    display: none !important;
+  .primary-nav {
+    top: 100%;
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
   }
 
-  .nav-dropdown.is-open .mega-menu,
-  .nav-dropdown.is-open .nav-menu {
-    display: grid !important;
-  }
-
-  .primary-nav:not(.is-open) {
-    display: none !important;
+  body,
+  html {
+    overflow-x: hidden;
   }
 }
