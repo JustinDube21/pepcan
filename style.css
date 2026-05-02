@@ -4107,3 +4107,36 @@ body.cart-open .cart-drawer {
     align-items: center !important;
   }
 }
+/* Fix "View full catalog" button mobile */
+@media (max-width: 720px) {
+
+  .mega-menu a[href*="catalog"],
+  .view-full-catalog,
+  .catalog-link {
+    display: block !important;
+    width: 100% !important;
+
+    margin-top: 1rem !important;
+    padding: 0.9rem 1rem !important;
+
+    text-align: center !important;
+
+    background: #e00000 !important;
+    color: #fff !important;
+
+    font-weight: 900 !important;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+
+    border-radius: 8px !important;
+    border: 1px solid #e00000 !important;
+
+    white-space: nowrap !important;
+  }
+
+  .mega-menu a[href*="catalog"]:hover {
+    background: #ff1a1a !important;
+  }
+
+}
