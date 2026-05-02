@@ -4040,3 +4040,27 @@ body.cart-open .cart-drawer {
     display: none !important;
   }
 }
+/* Fix dropdown pushing content instead of overlapping */
+@media (max-width: 720px) {
+
+  .nav-dropdown {
+    width: 100%;
+  }
+
+  .nav-dropdown .nav-menu,
+  .nav-dropdown .mega-menu {
+    position: relative !important; /* 🔥 clé du fix */
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+    width: 100% !important;
+    margin-top: 0.5rem;
+  }
+
+  .primary-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+}
