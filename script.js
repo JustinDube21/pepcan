@@ -196,9 +196,13 @@
     document.querySelectorAll("[data-cart-title-count]").forEach((el) => {
       el.textContent = cartCount(items);
     });
-    document.querySelectorAll("[data-cart-subtotal]").forEach((el) => {
-      el.textContent = `${money(total)} CAD`;
-    });
+    const SHIPPING_FEE = 15;
+const shipping = total > 0 && total < threshold ? SHIPPING_FEE : 0;
+const totalWithShipping = total + shipping;
+
+document.querySelectorAll("[data-cart-subtotal]").forEach((el) => {
+  el.textContent = `${money(totalWithShipping)} CAD`;
+});
     const left = Math.max(0, threshold - total);
     const percent = Math.max(0, Math.min(100, (total / threshold) * 100));
     document.querySelectorAll("[data-shipping-copy]").forEach((el) => {
