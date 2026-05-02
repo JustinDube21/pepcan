@@ -4040,19 +4040,13 @@ body.cart-open .cart-drawer {
     display: none !important;
   }
 }
-/* Force mobile Shop dropdown to push menu items down */
+/* FINAL mobile hamburger dropdown fix */
 @media (max-width: 720px) {
   .primary-nav {
-    position: fixed !important;
-    top: 145px !important;
-    left: 1rem !important;
-    right: 1rem !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 0.75rem !important;
-    height: auto !important;
-    max-height: calc(100vh - 170px) !important;
+    gap: 0 !important;
     overflow-y: auto !important;
   }
 
@@ -4065,17 +4059,13 @@ body.cart-open .cart-drawer {
   .nav-dropdown .mega-menu,
   .nav-dropdown .nav-menu {
     position: static !important;
-    inset: auto !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    transform: none !important;
-
+    display: none !important;
     width: 100% !important;
     max-width: 100% !important;
-    margin: 0.75rem 0 0 !important;
-
-    display: none !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0.75rem 0 1rem !important;
+    transform: none !important;
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
@@ -4083,22 +4073,37 @@ body.cart-open .cart-drawer {
 
   .nav-dropdown.is-open .mega-menu,
   .nav-dropdown.is-open .nav-menu {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.75rem !important;
+    display: block !important;
   }
 
-  .mega-menu-grid,
+  .mega-category-grid,
+  .mega-product-grid,
   .featured-product-grid,
-  .category-row-grid {
+  .nav-menu {
     display: flex !important;
     flex-direction: column !important;
     gap: 0.75rem !important;
     width: 100% !important;
   }
 
-  .primary-nav > a,
-  .primary-nav .nav-dropdown {
-    flex: 0 0 auto !important;
+  .mega-category-card,
+  .mega-product-card,
+  .category-row-card,
+  .nav-menu a {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 82px 1fr !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+    margin: 0 !important;
+  }
+
+  .primary-nav > a {
+    position: relative !important;
+    z-index: 1 !important;
+    display: flex !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    align-items: center !important;
   }
 }
